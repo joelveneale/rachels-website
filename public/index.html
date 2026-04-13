@@ -1146,7 +1146,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     const bookUrl = `${BOOKWHEN_BASE}#${event.id}`;
 
     return `
-      <div class="bw-card" style="border-top: 3px solid ${type.bg};" data-basket-url="${attrs.built_basket_iframe_url || ''}" data-title="${title}" data-subtitle="${formatDate(startAt)} · ${formatTime(startAt)}${endAt ? ' – ' + formatTime(endAt) : ''}">
+      <div class="bw-card" style="border-top: 3px solid ${type.bg};" data-basket-url="${attrs.built_basket_url || ''}" data-title="${title}" data-subtitle="${formatDate(startAt)} · ${formatTime(startAt)}${endAt ? ' – ' + formatTime(endAt) : ''}" data-session-type="${type.label}" data-tickets='${JSON.stringify(tickets.map(t => ({ id: t.id, title: t.attributes?.title || '', cost: t.attributes?.cost, available: t.attributes?.available, number_issued: t.attributes?.number_issued, number_taken: t.attributes?.number_taken })))}'>
         <div class="bw-card-type" style="background:${type.bg}; color:${type.color};">${type.label}</div>
         <div class="bw-card-title">${title}</div>
         <div class="bw-card-datetime">
@@ -1295,28 +1295,115 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   }
 
 
-  // ── Booking modal (iframe) ──
+  // ── Ticket selector modal ──
+  let _bwCurrentTickets = [];
+
   window.openBookingModal = function(card) {
-    const modal     = document.getElementById('bw-modal');
-    const iframe    = document.getElementById('bw-modal-iframe');
-    const titleEl   = document.getElementById('bw-modal-title');
+    const modal    = document.getElementById('bw-modal');
+    const titleEl  = document.getElementById('bw-modal-title');
     const subtitleEl = document.getElementById('bw-modal-subtitle');
+    const typeEl   = document.getElementById('bw-modal-type');
+    const rowsEl   = document.getElementById('bw-ticket-rows');
 
     titleEl.textContent    = card.dataset.title;
     subtitleEl.textContent = card.dataset.subtitle;
+    typeEl.textContent     = card.dataset.sessionType || '';
 
-    // built_basket_iframe_url is relative to bookwhen.com
-    const raw = card.dataset.basketUrl;
-    const url = raw.startsWith('http') ? raw : 'https://bookwhen.com' + raw;
-    iframe.src = url;
+    // Parse tickets from data attribute
+    _bwCurrentTickets = JSON.parse(card.dataset.tickets || '[]');
 
+    // Build ticket rows
+    rowsEl.innerHTML = _bwCurrentTickets.map((t, i) => {
+      const pricePence = t.cost?.net ?? 0;
+      const priceStr   = pricePence === 0 ? 'Free' : '£' + (pricePence / 100).toFixed(2).replace('.00','');
+      const isSoldOut  = !t.available;
+      const max        = t.number_issued != null
+        ? Math.max(0, t.number_issued - (t.number_taken || 0))
+        : 20; // no cap — allow up to 20
+
+      return `
+        <div class="bw-ticket-row" id="bw-row-${i}">
+          <div class="bw-ticket-info">
+            <div class="bw-ticket-name">${t.title}</div>
+            <div class="bw-ticket-price">${priceStr} per ticket</div>
+            ${isSoldOut ? '<div class="bw-ticket-sold">Sold out</div>' : ''}
+          </div>
+          <div class="bw-qty-control">
+            <button class="bw-qty-btn" onclick="bwChangeQty(${i}, -1)" id="bw-minus-${i}" disabled>−</button>
+            <div class="bw-qty-num" id="bw-qty-${i}">0</div>
+            <button class="bw-qty-btn" onclick="bwChangeQty(${i}, 1)" id="bw-plus-${i}" ${isSoldOut || max === 0 ? 'disabled' : ''}>+</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    bwUpdateTotal();
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   };
 
+  window.bwChangeQty = function(idx, delta) {
+    const qtyEl   = document.getElementById('bw-qty-' + idx);
+    const minusEl = document.getElementById('bw-minus-' + idx);
+    const plusEl  = document.getElementById('bw-plus-' + idx);
+    const t       = _bwCurrentTickets[idx];
+
+    const max = t.number_issued != null
+      ? Math.max(0, t.number_issued - (t.number_taken || 0))
+      : 20;
+
+    let qty = parseInt(qtyEl.textContent) + delta;
+    qty = Math.max(0, Math.min(qty, max));
+    qtyEl.textContent = qty;
+
+    minusEl.disabled = qty === 0;
+    plusEl.disabled  = qty >= max;
+
+    bwUpdateTotal();
+  };
+
+  function bwUpdateTotal() {
+    let totalPence = 0, totalTickets = 0;
+
+    _bwCurrentTickets.forEach((t, i) => {
+      const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
+      totalPence   += qty * (t.cost?.net ?? 0);
+      totalTickets += qty;
+    });
+
+    const totalEl   = document.getElementById('bw-modal-total');
+    const confirmEl = document.getElementById('bw-modal-confirm');
+
+    totalEl.textContent = totalPence === 0 && totalTickets === 0
+      ? '£0.00'
+      : totalPence === 0
+        ? 'Free'
+        : '£' + (totalPence / 100).toFixed(2);
+
+    if (totalTickets > 0) {
+      confirmEl.style.opacity = '1';
+      confirmEl.style.pointerEvents = 'auto';
+      confirmEl.textContent = `Book ${totalTickets} ticket${totalTickets === 1 ? '' : 's'} →`;
+    } else {
+      confirmEl.style.opacity = '0.4';
+      confirmEl.style.pointerEvents = 'none';
+      confirmEl.textContent = 'Select tickets to continue →';
+    }
+  }
+
+  window.bwConfirmBooking = function() {
+    // Build basket URL: basket_item_ids[ticket_id]=qty&...
+    const params = new URLSearchParams();
+    _bwCurrentTickets.forEach((t, i) => {
+      const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
+      if (qty > 0) {
+        params.append('basket_item_ids[' + t.id + ']', qty);
+      }
+    });
+    const url = 'https://bookwhen.com/rachelsplaycafe/basket_items/apply?' + params.toString();
+    window.location.href = url;
+  };
+
   function closeBwModal() {
-    const iframe = document.getElementById('bw-modal-iframe');
-    iframe.src = '';
     document.getElementById('bw-modal').classList.remove('open');
     document.body.style.overflow = '';
   }
@@ -1345,26 +1432,48 @@ function toggleFaq(el) {
 </script>
 
 
-<!-- BOOKWHEN BOOKING MODAL -->
-<div id="bw-modal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center;">
-  <div id="bw-modal-backdrop" style="position:absolute; inset:0; background:rgba(26,58,35,0.75); backdrop-filter:blur(4px);"></div>
+<!-- BOOKWHEN TICKET SELECTOR MODAL -->
+<div id="bw-modal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:flex-end; justify-content:center;">
+  <div id="bw-modal-backdrop" style="position:absolute; inset:0; background:rgba(26,58,35,0.6); backdrop-filter:blur(3px);"></div>
   <div id="bw-modal-box" style="
     position:relative; z-index:1;
     background:var(--white);
-    width:min(680px, 94vw);
+    width:min(680px, 100vw);
     max-height:90vh;
     display:flex; flex-direction:column;
-    box-shadow:0 24px 80px rgba(26,58,35,0.3);
+    box-shadow:0 -8px 60px rgba(26,58,35,0.25);
   ">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--putty); flex-shrink:0;">
+    <!-- Header -->
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:24px 28px 20px; border-bottom:1px solid var(--putty); flex-shrink:0;">
       <div>
-        <div id="bw-modal-title" style="font-family:'Affigere',sans-serif; font-size:22px; color:var(--green); line-height:1.2; letter-spacing:0.01em;"></div>
-        <div id="bw-modal-subtitle" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--green); opacity:0.55; margin-top:2px;"></div>
+        <div id="bw-modal-type" style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; opacity:0.45; margin-bottom:4px;"></div>
+        <div id="bw-modal-title" style="font-family:'Affigere',sans-serif; font-size:24px; color:var(--green); line-height:1.1; letter-spacing:0.01em;"></div>
+        <div id="bw-modal-subtitle" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--green); opacity:0.5; margin-top:4px;"></div>
       </div>
-      <button id="bw-modal-close" style="background:none; border:none; cursor:pointer; font-size:22px; color:var(--green); opacity:0.45; padding:4px 8px; line-height:1; transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.45">✕</button>
+      <button id="bw-modal-close" style="background:none; border:none; cursor:pointer; font-size:22px; color:var(--green); opacity:0.35; padding:4px 8px; line-height:1; transition:opacity 0.2s; margin-top:2px;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=0.35">✕</button>
     </div>
-    <iframe id="bw-modal-iframe" src="" frameborder="0" scrolling="yes" seamless="seamless"
-      style="flex:1; border:none; min-height:540px; width:100%;"></iframe>
+
+    <!-- Ticket rows — injected by JS -->
+    <div id="bw-ticket-rows" style="overflow-y:auto; flex:1; padding:0 28px;"></div>
+
+    <!-- Footer: total + confirm -->
+    <div style="padding:20px 28px; border-top:1px solid var(--putty); flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+      <div>
+        <div style="font-family:'Instrument Serif',serif; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); opacity:0.4; margin-bottom:2px;">Total</div>
+        <div id="bw-modal-total" style="font-family:'Affigere',sans-serif; font-size:32px; color:var(--green); line-height:1;">£0.00</div>
+      </div>
+      <button id="bw-modal-confirm" onclick="bwConfirmBooking()" style="
+        flex:1; max-width:280px;
+        padding:16px 24px;
+        background:var(--green); color:var(--white);
+        font-family:'Instrument Serif',serif; font-size:14px;
+        letter-spacing:0.1em; text-transform:uppercase;
+        border:none; cursor:pointer;
+        transition:background 0.2s;
+        opacity:0.4;
+        pointer-events:none;
+      ">Select tickets to continue →</button>
+    </div>
   </div>
 </div>
 
