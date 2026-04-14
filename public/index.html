@@ -1096,7 +1096,6 @@ function fitHeroLogo() {
   const el = document.querySelector('.hero-logo');
   if (!el) return;
   const target = document.documentElement.clientWidth * 0.98;
-  // Binary-search the right font size for precision
   let lo = 40, hi = 600;
   el.style.whiteSpace = 'nowrap';
   for (let i = 0; i < 20; i++) {
@@ -1108,7 +1107,9 @@ function fitHeroLogo() {
   el.style.fontSize = Math.floor(lo) + 'px';
 }
 
+// Run immediately, then repeatedly in first second to catch font load
 fitHeroLogo();
+[50, 100, 200, 400, 800].forEach(ms => setTimeout(fitHeroLogo, ms));
 document.fonts.ready.then(fitHeroLogo);
 window.addEventListener('resize', fitHeroLogo);
 function openMenu() { document.getElementById('mobileMenu').classList.add('open'); }
