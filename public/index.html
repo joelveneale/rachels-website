@@ -1369,8 +1369,8 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         dayEvents.forEach(event => {
           const attrs = event.attributes;
           const title = attrs.title || 'Session';
-          const type  = getType(title, startAt);
           const startAt = attrs.start_at, endAt = attrs.end_at;
+          const type  = getType(title, startAt);
 
           const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
           const tickets   = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
