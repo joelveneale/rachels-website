@@ -1274,15 +1274,16 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   ];
 
   function getType(title, startAt) {
-    // Match by start time first
     if (startAt) {
+      // Parse local UK time — Bookwhen stores in UTC, convert to Europe/London
       const d = new Date(startAt);
-      const h = d.getHours(), m = d.getMinutes();
+      const ukTime = new Date(d.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
+      const h = ukTime.getHours(), m = ukTime.getMinutes();
+      console.log('[Bookwhen] Time check:', title, '→ UK time', h + ':' + String(m).padStart(2,'0'));
       const match = TIME_TYPES.find(t => t.hour === h && t.minute === m);
       if (match) return match;
     }
-    // Anything unrecognised → yellow ad-hoc
-    console.log('[Bookwhen] Unmatched title:', JSON.stringify(title));
+    console.log('[Bookwhen] Unmatched:', JSON.stringify(title), startAt);
     return { cls: 'tt-s6', label: title };
   }
 
