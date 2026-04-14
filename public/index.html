@@ -465,6 +465,35 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   opacity: 0.7;
 }
 .tt-slot-spaces.low { font-weight: normal; opacity: 1; }
+
+/* Description tooltip on hover */
+.tt-slot { position: relative; }
+.tt-slot-desc {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0; right: 0;
+  background: var(--green);
+  color: var(--white);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  z-index: 10;
+  pointer-events: none;
+  border-top: 2px solid var(--hazel, #A0673A);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+.tt-slot-desc::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 20px;
+  border: 6px solid transparent;
+  border-top-color: var(--green);
+}
+.tt-has-desc:hover .tt-slot-desc { display: block; }
+
 .tt-slot-full  { font-style: italic; opacity: 0.75; }
 .tt-slot-low   { font-style: italic; }
 .tt-slot-book {
@@ -479,30 +508,25 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 .tt-slot:hover .tt-slot-book { opacity: 1; }
 
 /* Slot colour themes */
-.tt-under2    { background: var(--blush); }
-.tt-under2 .tt-slot-time,
-.tt-under2 .tt-slot-name,
-.tt-under2 .tt-slot-spaces { color: var(--blush-dark); }
+/* Session slot colour themes */
+.tt-s1 { background: var(--blush); }
+.tt-s1 .tt-slot-name, .tt-s1 .tt-slot-spaces, .tt-s1 .tt-slot-book { color: var(--blush-dark); }
 
-.tt-lunchtime { background: var(--sky); }
-.tt-lunchtime .tt-slot-time,
-.tt-lunchtime .tt-slot-name,
-.tt-lunchtime .tt-slot-spaces { color: var(--sky-dark); }
+.tt-s2 { background: var(--sky); }
+.tt-s2 .tt-slot-name, .tt-s2 .tt-slot-spaces, .tt-s2 .tt-slot-book { color: var(--sky-dark); }
 
-.tt-postnap   { background: var(--putty); }
-.tt-postnap .tt-slot-time,
-.tt-postnap .tt-slot-name,
-.tt-postnap .tt-slot-spaces { color: var(--green); }
+.tt-s3 { background: var(--sage); }
+.tt-s3 .tt-slot-name, .tt-s3 .tt-slot-spaces, .tt-s3 .tt-slot-book { color: var(--sage-dark); }
 
-.tt-afterschool { background: rgba(255,255,255,0.12); }
-.tt-afterschool .tt-slot-time  { color: rgba(255,255,255,0.55); }
-.tt-afterschool .tt-slot-name  { color: var(--white); }
-.tt-afterschool .tt-slot-spaces { color: rgba(255,255,255,0.6); }
+.tt-s4 { background: var(--lavender); }
+.tt-s4 .tt-slot-name, .tt-s4 .tt-slot-spaces, .tt-s4 .tt-slot-book { color: var(--lavender-dark); }
 
-.tt-friday    { background: var(--blush-dark); }
-.tt-friday .tt-slot-time  { color: var(--blush); opacity: 0.7; }
-.tt-friday .tt-slot-name  { color: var(--white); }
-.tt-friday .tt-slot-spaces { color: rgba(255,255,255,0.6); }
+.tt-s5 { background: var(--peach); }
+.tt-s5 .tt-slot-name, .tt-s5 .tt-slot-spaces, .tt-s5 .tt-slot-book { color: var(--peach-dark); }
+
+/* Ad-hoc / unrecognised sessions */
+.tt-s6 { background: var(--yellow); }
+.tt-s6 .tt-slot-name, .tt-s6 .tt-slot-spaces, .tt-s6 .tt-slot-book { color: var(--yellow-dark); }
 
 @media (max-width: 960px) {
   #booking-embed { padding: 60px 20px; }
@@ -1217,17 +1241,18 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   const BOOKWHEN_BASE = 'https://bookwhen.com/rachelsplaycafe';
   const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  // Exact title match — ordered longest first to avoid partial matches
   const SESSION_TYPES = [
-    { keyword: 'Under 2',      cls: 'tt-under2',     label: "Under 2's" },
-    { keyword: 'Lunchtime',    cls: 'tt-lunchtime',  label: 'Lunchtime' },
-    { keyword: 'Post-Nap',     cls: 'tt-postnap',    label: 'Post-Nap'  },
-    { keyword: 'After School', cls: 'tt-afterschool',label: 'After School' },
-    { keyword: 'Friday',       cls: 'tt-friday',     label: 'Fri Night' },
+    { title: "9am - 10.30am (Under 2's only)", cls: 'tt-s1', label: "Under 2's" },
+    { title: '9am - 10.30am',                  cls: 'tt-s2', label: '9–10:30'   },
+    { title: '11am - 1pm',                     cls: 'tt-s3', label: '11–1'      },
+    { title: '1.30pm - 3pm',                   cls: 'tt-s4', label: '1:30–3'    },
+    { title: '3.30pm - 5pm',                   cls: 'tt-s5', label: '3:30–5'    },
   ];
 
   function getType(title) {
-    return SESSION_TYPES.find(t => title.includes(t.keyword)) ||
-           { cls: 'tt-afterschool', label: 'Session' };
+    const match = SESSION_TYPES.find(t => title.trim() === t.title);
+    return match || { cls: 'tt-s6', label: 'Session' };
   }
 
   function startOfWeek(d) {
@@ -1346,18 +1371,20 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
           const subtitle = `${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''} · ${dayDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
 
+          const description = (attrs.details || '').trim();
+
           html += `
-            <div class="tt-slot ${type.cls}${isFull ? ' tt-full' : ''}"
+            <div class="tt-slot ${type.cls}${isFull ? ' tt-full' : ''}${description ? ' tt-has-desc' : ''}"
               ${!isFull ? `onclick="openBookingModal(this)"` : ''}
               data-title="${title.replace(/"/g,'&quot;')}"
               data-subtitle="${subtitle}"
               data-session-type="${type.label}"
               data-basket-url="${attrs.built_basket_url || ''}"
               data-tickets='${ticketData}'>
-              <div class="tt-slot-time">${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''}</div>
               <div class="tt-slot-name">${title}</div>
               ${spacesStr ? `<div class="tt-slot-spaces ${spacesClass}">${spacesStr}</div>` : ''}
               ${!isFull ? `<div class="tt-slot-book">Tap to book →</div>` : ''}
+              ${description ? `<div class="tt-slot-desc">${description}</div>` : ''}
             </div>`;
         });
       }
