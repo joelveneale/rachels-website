@@ -1407,9 +1407,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const locationObj = locationId
             ? (window._bwLocations || []).find(l => l.id === locationId)
             : null;
-          const locationName = locationObj?.attributes?.address_name
-            || locationObj?.attributes?.name
-            || '';
+          const locationName = locationObj?.attributes?.address_text || '';
 
           html += `
             <div class="tt-slot ${type.cls}${isFull ? ' tt-full' : ''}${description ? ' tt-has-desc' : ''}"
@@ -1451,8 +1449,6 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
       window._bwTickets   = (data.included || []).filter(i => i.type === 'ticket');
       window._bwLocations = (data.included || []).filter(i => i.type === 'location');
-      console.log('[Bookwhen] Locations:', JSON.stringify(window._bwLocations));
-      console.log('[Bookwhen] Sample event relationships:', JSON.stringify(data.data?.[0]?.relationships));
       allEvents = (data.data || []).sort((a, b) =>
         new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
       allWeeks  = getWeeks(allEvents);
