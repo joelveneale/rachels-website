@@ -502,6 +502,14 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 }
 .tt-has-desc:hover .tt-slot-desc { display: block; }
 
+.tt-slot-location {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.6;
+  line-height: 1.3;
+  margin-top: 1px;
+}
 .tt-slot-full  { font-style: italic; opacity: 0.75; }
 .tt-slot-low   { font-style: italic; }
 .tt-slot-book {
@@ -1392,6 +1400,16 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const subtitle = `${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''} · ${dayDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
 
           const description = (attrs.details || '').trim();
+          const isAdHoc = type.cls === 'tt-s6';
+
+          // Location
+          const locationId = event.relationships?.location?.data?.id;
+          const locationObj = locationId
+            ? (window._bwLocations || []).find(l => l.id === locationId)
+            : null;
+          const locationName = locationObj?.attributes?.address_name
+            || locationObj?.attributes?.name
+            || '';
 
           html += `
             <div class="tt-slot ${type.cls}${isFull ? ' tt-full' : ''}${description ? ' tt-has-desc' : ''}"
@@ -1401,7 +1419,9 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
               data-session-type="${type.label}"
               data-basket-url="${attrs.built_basket_url || ''}"
               data-tickets='${ticketData}'>
+              ${isAdHoc ? `<div class="tt-slot-time">${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''}</div>` : ''}
               <div class="tt-slot-name">${title}</div>
+              ${locationName ? `<div class="tt-slot-location">${locationName}</div>` : ''}
               ${spacesStr ? `<div class="tt-slot-spaces ${spacesClass}">${spacesStr}</div>` : ''}
               ${!isFull ? `<div class="tt-slot-book">Tap to book →</div>` : ''}
               ${description ? `<div class="tt-slot-desc">${description}</div>` : ''}
@@ -1429,7 +1449,8 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
 
-      window._bwTickets = (data.included || []).filter(i => i.type === 'ticket');
+      window._bwTickets   = (data.included || []).filter(i => i.type === 'ticket');
+      window._bwLocations = (data.included || []).filter(i => i.type === 'location');
       allEvents = (data.data || []).sort((a, b) =>
         new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
       allWeeks  = getWeeks(allEvents);

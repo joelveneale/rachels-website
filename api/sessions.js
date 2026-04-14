@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      'https://api.bookwhen.com/v2/events?include=tickets',
+      'https://api.bookwhen.com/v2/events?include=tickets,location',
       {
         headers: {
           'Authorization': 'Basic ' + Buffer.from(API_KEY + ':').toString('base64'),
