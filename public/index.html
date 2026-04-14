@@ -1275,15 +1275,14 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
   function getType(title, startAt) {
     if (startAt) {
-      // Parse local UK time — Bookwhen stores in UTC, convert to Europe/London
-      const d = new Date(startAt);
-      const ukTime = new Date(d.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
-      const h = ukTime.getHours(), m = ukTime.getMinutes();
-      console.log('[Bookwhen] Time check:', title, '→ UK time', h + ':' + String(m).padStart(2,'0'));
+      // Times come through as e.g. "2026-04-20T09:00:00.000+01:00"
+      // Just parse the time part directly from the string
+      const timePart = startAt.substring(11, 16); // "09:00"
+      const h = parseInt(timePart.split(':')[0], 10);
+      const m = parseInt(timePart.split(':')[1], 10);
       const match = TIME_TYPES.find(t => t.hour === h && t.minute === m);
       if (match) return match;
     }
-    console.log('[Bookwhen] Unmatched:', JSON.stringify(title), startAt);
     return { cls: 'tt-s6', label: title };
   }
 
