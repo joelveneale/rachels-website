@@ -97,7 +97,7 @@ nav.scrolled {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   position: relative; overflow: hidden;
-  padding: 100px 48px 80px;
+  padding: 100px 0 80px;
   text-align: center;
 }
 .hero-bg-circles {
@@ -122,23 +122,25 @@ nav.scrolled {
 }
 .hero-logo {
   font-family: 'Affigere', sans-serif;
-  font-size: clamp(56px, 10vw, 108px);
+  font-size: 22vw;
   color: var(--white);
-  line-height: 1;
-  margin-bottom: 24px;
-  letter-spacing: 0.02em;
+  line-height: 0.85;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
   animation: fadeUp 1s ease 0.15s both;
   text-align: center;
+  width: 100%;
+  white-space: nowrap;
 }
 .hero-logo-sub {
   display: block;
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(12px, 1.8vw, 18px);
+  font-size: clamp(12px, 2vw, 20px);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--putty);
-  opacity: 0.7;
-  margin-top: 12px;
+  opacity: 0.65;
+  margin-top: 16px;
   line-height: 1;
 }
 .hero-tagline { display: none; }
@@ -518,7 +520,7 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .hero { padding: 100px 24px 80px; }
-  .hero-logo { font-size: clamp(42px, 12vw, 68px); }
+  .hero-logo { letter-spacing: -0.02em; }
   .trust-bar { gap: 24px; padding: 24px; }
   .about, .cafe { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
   .about-img, .cafe-img { aspect-ratio: 4/3; }
@@ -1088,6 +1090,27 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
 });
+
+// Fit hero logo exactly to viewport width
+function fitHeroLogo() {
+  const el = document.querySelector('.hero-logo');
+  if (!el) return;
+  const target = document.documentElement.clientWidth * 0.98;
+  // Binary-search the right font size for precision
+  let lo = 40, hi = 600;
+  el.style.whiteSpace = 'nowrap';
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2;
+    el.style.fontSize = mid + 'px';
+    if (el.scrollWidth < target) lo = mid;
+    else hi = mid;
+  }
+  el.style.fontSize = Math.floor(lo) + 'px';
+}
+
+fitHeroLogo();
+document.fonts.ready.then(fitHeroLogo);
+window.addEventListener('resize', fitHeroLogo);
 function openMenu() { document.getElementById('mobileMenu').classList.add('open'); }
 function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
 const observer = new IntersectionObserver((entries) => {
