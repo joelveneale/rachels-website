@@ -1304,6 +1304,114 @@ function toggleFaq(el) {
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if (!wasOpen) item.classList.add('open');
 }
+
+// ── Ticket selector modal ──
+let _bwCurrentTickets = [];
+
+window.openBookingModal = function(card) {
+  const modal      = document.getElementById('bw-modal');
+  const titleEl    = document.getElementById('bw-modal-title');
+  const subtitleEl = document.getElementById('bw-modal-subtitle');
+  const typeEl     = document.getElementById('bw-modal-type');
+  const rowsEl     = document.getElementById('bw-ticket-rows');
+
+  titleEl.textContent    = card.dataset.title;
+  subtitleEl.textContent = card.dataset.subtitle;
+  typeEl.textContent     = card.dataset.sessionType || '';
+
+  _bwCurrentTickets = JSON.parse(card.dataset.tickets || '[]');
+
+  rowsEl.innerHTML = _bwCurrentTickets.map((t, i) => {
+    const pricePence = t.cost?.net ?? 0;
+    const priceStr   = pricePence === 0 ? 'Free' : '£' + (pricePence / 100).toFixed(2).replace('.00', '');
+    const isSoldOut  = !t.available;
+    const max        = t.number_issued != null
+      ? Math.max(0, t.number_issued - (t.number_taken || 0))
+      : 30;
+
+    return `
+      <div class="bw-ticket-row" id="bw-row-${i}">
+        <div class="bw-ticket-info">
+          <div class="bw-ticket-name">${t.title}</div>
+          <div class="bw-ticket-price">${priceStr} per ticket</div>
+          ${isSoldOut ? '<div class="bw-ticket-sold">Sold out</div>' : ''}
+        </div>
+        <div class="bw-qty-control">
+          <button class="bw-qty-btn" onclick="bwChangeQty(${i}, -1)" id="bw-minus-${i}" disabled>−</button>
+          <div class="bw-qty-num" id="bw-qty-${i}">0</div>
+          <button class="bw-qty-btn" onclick="bwChangeQty(${i}, 1)" id="bw-plus-${i}" ${isSoldOut || max === 0 ? 'disabled' : ''}>+</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  bwUpdateTotal();
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.bwChangeQty = function(idx, delta) {
+  const qtyEl   = document.getElementById('bw-qty-' + idx);
+  const minusEl = document.getElementById('bw-minus-' + idx);
+  const plusEl  = document.getElementById('bw-plus-' + idx);
+  const t       = _bwCurrentTickets[idx];
+  const max     = t.number_issued != null
+    ? Math.max(0, t.number_issued - (t.number_taken || 0))
+    : 30;
+
+  let qty = parseInt(qtyEl.textContent) + delta;
+  qty = Math.max(0, Math.min(qty, max));
+  qtyEl.textContent  = qty;
+  minusEl.disabled   = qty === 0;
+  plusEl.disabled    = qty >= max;
+  bwUpdateTotal();
+};
+
+function bwUpdateTotal() {
+  let totalPence = 0, totalTickets = 0;
+  _bwCurrentTickets.forEach((t, i) => {
+    const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
+    totalPence   += qty * (t.cost?.net ?? 0);
+    totalTickets += qty;
+  });
+
+  const totalEl   = document.getElementById('bw-modal-total');
+  const confirmEl = document.getElementById('bw-modal-confirm');
+
+  totalEl.textContent = totalPence === 0 && totalTickets === 0
+    ? '£0.00'
+    : totalPence === 0 ? 'Free'
+    : '£' + (totalPence / 100).toFixed(2);
+
+  if (totalTickets > 0) {
+    confirmEl.style.opacity       = '1';
+    confirmEl.style.pointerEvents = 'auto';
+    confirmEl.textContent = `Book ${totalTickets} ticket${totalTickets === 1 ? '' : 's'} →`;
+  } else {
+    confirmEl.style.opacity       = '0.4';
+    confirmEl.style.pointerEvents = 'none';
+    confirmEl.textContent = 'Select tickets to continue →';
+  }
+}
+
+window.bwConfirmBooking = function() {
+  const params = new URLSearchParams();
+  _bwCurrentTickets.forEach((t, i) => {
+    const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
+    if (qty > 0) params.append('basket_item_ids[' + t.id + ']', qty);
+  });
+  window.location.href = 'https://bookwhen.com/rachelsplaycafe/basket_items/apply?' + params.toString();
+};
+
+function closeBwModal() {
+  document.getElementById('bw-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('bw-modal-close').addEventListener('click', closeBwModal);
+  document.getElementById('bw-modal-backdrop').addEventListener('click', closeBwModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBwModal(); });
+});
 </script>
 
 
