@@ -540,7 +540,7 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 #bw-modal.open { display:flex !important; animation:modalFadeIn 0.2s ease; }
 #bw-modal-box { animation:modalSlideUp 0.25s ease; }
 @keyframes modalFadeIn  { from { opacity:0; } to { opacity:1; } }
-@keyframes modalSlideUp { from { transform:translateY(16px); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes modalSlideUp { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
 /* Ticket selector rows */
 .bw-ticket-row {
   display:flex; align-items:center; justify-content:space-between;
@@ -1416,7 +1416,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <!-- BOOKWHEN TICKET SELECTOR MODAL -->
-<div id="bw-modal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:flex-end; justify-content:center;">
+<div id="bw-modal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center;">
   <div id="bw-modal-backdrop" style="position:absolute; inset:0; background:rgba(26,58,35,0.6); backdrop-filter:blur(3px);"></div>
   <div id="bw-modal-box" style="
     position:relative; z-index:1;
