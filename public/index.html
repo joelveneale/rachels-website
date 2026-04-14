@@ -29,6 +29,8 @@
   --white: #FFFFFF;
   --putty-mid: #c4cec8;
   --warm-cream: #F8F5F0;
+  --walnut: #5C3D2E;
+  --hazel: #A0673A;
   --blush: #EDB4A8;
   --blush-dark: #7a3020;
   --sky: #A8CEDE;
@@ -127,7 +129,7 @@ nav.scrolled {
   color: var(--white);
   line-height: 0.85;
   margin-bottom: 20px;
-  letter-spacing: 0.005em;
+  letter-spacing: 0.04em;
   animation: fadeUp 1s ease 0.15s both;
   text-align: center;
   width: 100%;
@@ -516,6 +518,59 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   .tt-week-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
 }
 
+
+/* ── TEXTURE & WALNUT ACCENTS ── */
+
+/* Grain overlay — applied as a pseudo-element on sections */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  background-repeat: repeat;
+}
+
+/* Section dividers */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--walnut), var(--hazel), var(--walnut), transparent);
+  opacity: 0.35;
+  border: none;
+  margin: 0;
+}
+
+/* Walnut border utility */
+.walnut-border-top    { border-top:    1px solid rgba(92,61,46,0.2); }
+.walnut-border-bottom { border-bottom: 1px solid rgba(92,61,46,0.2); }
+
+/* Nav bottom line when scrolled */
+nav.scrolled { border-bottom: 1px solid rgba(92,61,46,0.15); }
+
+/* FAQ lines */
+.faq-item { border-bottom-color: rgba(92,61,46,0.15); }
+.faq-q    { border-bottom-color: rgba(92,61,46,0.12); }
+
+/* Visit section detail lines */
+.visit-block { border-left: 2px solid var(--hazel); padding-left: 20px; opacity: 1; }
+.visit-block h4 { color: var(--walnut); }
+
+/* About / Café section inner border */
+.about, .cafe { border-top: 1px solid rgba(92,61,46,0.1); border-bottom: 1px solid rgba(92,61,46,0.1); }
+
+/* Included section card tops */
+.included-item { border-top: 2px solid var(--hazel); padding-top: 20px; }
+
+/* Wellness card left border accent */
+.wellness-card { border-left: 3px solid var(--walnut); }
+
+/* Footer top line */
+footer { border-top: 2px solid var(--walnut); }
+footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
+
 @media (max-width: 900px) {
   nav { padding: 18px 24px; }
   .nav-links { display: none; }
@@ -833,8 +888,12 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
-<!-- WHAT'S INCLUDED --><!-- WHAT'S INCLUDED -->
-<div class="included">
+
+<div class="section-divider"></div>
+<!-- WHAT'S INCLUDED -->
+<div class="section-divider"></div>
+<!-- WHAT'S INCLUDED -->
+<div class="included grain" style="position:relative;">
   <div class="included-inner">
     <div class="section-header reveal">
       <p class="label">Every visit includes</p>
@@ -873,6 +932,8 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </div>
 
+
+<div class="section-divider"></div>
 <!-- CAFÉ -->
 <div class="cafe" id="cafe">
   <div class="cafe-img reveal">
@@ -888,8 +949,10 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </div>
 
+
+<div class="section-divider"></div>
 <!-- WELLNESS -->
-<section id="wellness">
+<section id="wellness" class="grain" style="position:relative;">
   <div class="wellness-inner">
     <p class="label reveal">Wellness at Rachel's</p>
     <h2 class="reveal">For the grown-ups too</h2>
@@ -919,8 +982,10 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
+
+<div class="section-divider"></div>
 <!-- PARTIES -->
-<section id="parties">
+<section id="parties" class="grain" style="position:relative;">
   <div class="parties-inner">
     <p class="label reveal">Parties &amp; Private Hire</p>
     <h2 class="reveal">Make it a moment</h2>
@@ -964,6 +1029,8 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
+
+<div class="section-divider"></div>
 <!-- GALLERY -->
 <section id="gallery">
   <div class="gallery-inner">
@@ -983,8 +1050,10 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
+
+<div class="section-divider"></div>
 <!-- VISIT -->
-<section id="visit">
+<section id="visit" class="grain" style="position:relative;">
   <div class="visit-inner">
     <div class="visit-details">
       <h2 class="reveal">Come &amp; find us</h2>
@@ -1011,8 +1080,10 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
+
+<div class="section-divider"></div>
 <!-- FAQ -->
-<div class="faq">
+<div class="faq grain" style="position:relative;">
   <div class="faq-inner">
     <h2 class="reveal">Good to know</h2>
     <div class="faq-item">
@@ -1111,7 +1182,7 @@ function fitHeroLogo() {
     'visibility:hidden',
     'font-family:"Affigere",sans-serif',
     'font-size:200px',
-    'letter-spacing:0.005em',
+    'letter-spacing:0.04em',
   ].join(';');
   probe.textContent = text;
   document.body.appendChild(probe);
