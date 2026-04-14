@@ -1257,30 +1257,33 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   const BOOKWHEN_BASE = 'https://bookwhen.com/rachelsplaycafe';
   const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Normalise a title for comparison — lowercase, collapse spaces, strip smart quotes
   function normalise(s) {
     return s.toLowerCase()
-      .replace(/[\u2018\u2019']/g, "'")  // smart quotes → straight
-      .replace(/[\u2013\u2014]/g, '-')   // em/en dash → hyphen
+      .replace(/[\u2018\u2019']/g, "'")
+      .replace(/[\u2013\u2014]/g, '-')
       .replace(/\s+/g, ' ')
       .trim();
   }
 
-  const SESSION_TYPES = [
-    { title: "9am - 10.30am (under 2's only)", cls: 'tt-s1', label: "Under 2's" },
-    { title: '9am - 10.30am',                  cls: 'tt-s2', label: '9–10:30'   },
-    { title: '11am - 1pm',                     cls: 'tt-s3', label: '11–1'      },
-    { title: '1.30pm - 3pm',                   cls: 'tt-s4', label: '1:30–3'    },
-    { title: '3.30pm - 5pm',                   cls: 'tt-s5', label: '3:30–5'    },
+  // Colour coded by time slot
+  const TIME_TYPES = [
+    { hour: 9,  minute: 0,  cls: 'tt-s1', label: '9–10:30'  },
+    { hour: 11, minute: 0,  cls: 'tt-s3', label: '11–1'     },
+    { hour: 13, minute: 30, cls: 'tt-s4', label: '1:30–3'   },
+    { hour: 15, minute: 30, cls: 'tt-s5', label: '3:30–5'   },
   ];
 
-  function getType(title) {
-    const n = normalise(title);
-    // Check exact match first, then partial — longer titles listed first to avoid short match winning
-    const match = SESSION_TYPES.find(t => n === t.title) ||
-                  SESSION_TYPES.find(t => n.includes(t.title));
-    if (!match) console.log('[Bookwhen] Unmatched title:', JSON.stringify(title));
-    return match || { cls: 'tt-s6', label: title };
+  function getType(title, startAt) {
+    // Match by start time first
+    if (startAt) {
+      const d = new Date(startAt);
+      const h = d.getHours(), m = d.getMinutes();
+      const match = TIME_TYPES.find(t => t.hour === h && t.minute === m);
+      if (match) return match;
+    }
+    // Anything unrecognised → yellow ad-hoc
+    console.log('[Bookwhen] Unmatched title:', JSON.stringify(title));
+    return { cls: 'tt-s6', label: title };
   }
 
   function startOfWeek(d) {
@@ -1365,7 +1368,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         dayEvents.forEach(event => {
           const attrs = event.attributes;
           const title = attrs.title || 'Session';
-          const type  = getType(title);
+          const type  = getType(title, startAt);
           const startAt = attrs.start_at, endAt = attrs.end_at;
 
           const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
@@ -1400,7 +1403,6 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const subtitle = `${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''} · ${dayDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
 
           const description = (attrs.details || '').trim();
-          const isAdHoc = type.cls === 'tt-s6';
 
           // Location
           const locationId = event.relationships?.location?.data?.id;
@@ -1417,7 +1419,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
               data-session-type="${type.label}"
               data-basket-url="${attrs.built_basket_url || ''}"
               data-tickets='${ticketData}'>
-              ${isAdHoc ? `<div class="tt-slot-time">${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''}</div>` : ''}
+              <div class="tt-slot-time">${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''}</div>
               <div class="tt-slot-name">${title}</div>
               ${locationName ? `<div class="tt-slot-location">${locationName}</div>` : ''}
               ${spacesStr ? `<div class="tt-slot-spaces ${spacesClass}">${spacesStr}</div>` : ''}
