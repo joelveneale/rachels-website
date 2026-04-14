@@ -363,6 +363,144 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 .mobile-menu a { font-family: 'Affigere', sans-serif; font-size: 34px; color: var(--white); text-decoration: none; opacity: 0.85; }
 .mobile-close { position: absolute; top: 24px; right: 48px; background: none; border: none; color: white; font-size: 26px; cursor: pointer; opacity: 0.55; }
 
+
+/* ── TIMETABLE / BOOKING ── */
+.tt-week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.tt-week-label {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--white);
+  opacity: 0.6;
+}
+.tt-week-btn {
+  font-family: 'Instrument Serif', serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: none;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  color: var(--white);
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.tt-week-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+.tt-week-btn:disabled { opacity: 0.2; cursor: default; }
+
+/* Day grid */
+.tt-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.tt-day-col { display: flex; flex-direction: column; gap: 3px; }
+.tt-day-name {
+  font-family: 'Affigere', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  color: var(--white);
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.08);
+  text-align: center;
+  line-height: 1;
+}
+.tt-day-col.tt-closed .tt-day-name { opacity: 0.3; }
+.tt-closed-msg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--white);
+  opacity: 0.18;
+  padding: 20px 10px;
+  text-align: center;
+  min-height: 80px;
+}
+
+/* Live session slots */
+.tt-slot {
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+  position: relative;
+}
+.tt-slot:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.tt-slot.tt-full { opacity: 0.45; cursor: default; }
+.tt-slot.tt-full:hover { filter: none; transform: none; }
+.tt-slot-time {
+  font-family: 'Instrument Serif', serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+  line-height: 1;
+}
+.tt-slot-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 13px;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.tt-slot-spaces {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 11px;
+  margin-top: 3px;
+  opacity: 0.7;
+}
+.tt-slot-spaces.low { font-weight: normal; opacity: 1; }
+
+/* Slot colour themes */
+.tt-under2    { background: var(--blush); }
+.tt-under2 .tt-slot-time,
+.tt-under2 .tt-slot-name,
+.tt-under2 .tt-slot-spaces { color: var(--blush-dark); }
+
+.tt-lunchtime { background: var(--sky); }
+.tt-lunchtime .tt-slot-time,
+.tt-lunchtime .tt-slot-name,
+.tt-lunchtime .tt-slot-spaces { color: var(--sky-dark); }
+
+.tt-postnap   { background: var(--putty); }
+.tt-postnap .tt-slot-time,
+.tt-postnap .tt-slot-name,
+.tt-postnap .tt-slot-spaces { color: var(--green); }
+
+.tt-afterschool { background: rgba(255,255,255,0.12); }
+.tt-afterschool .tt-slot-time  { color: rgba(255,255,255,0.55); }
+.tt-afterschool .tt-slot-name  { color: var(--white); }
+.tt-afterschool .tt-slot-spaces { color: rgba(255,255,255,0.6); }
+
+.tt-friday    { background: var(--blush-dark); }
+.tt-friday .tt-slot-time  { color: var(--blush); opacity: 0.7; }
+.tt-friday .tt-slot-name  { color: var(--white); }
+.tt-friday .tt-slot-spaces { color: rgba(255,255,255,0.6); }
+
+@media (max-width: 960px) {
+  #booking-embed { padding: 60px 20px; }
+  .tt-grid { grid-template-columns: repeat(4, 1fr); }
+  .tt-day-col:nth-child(5),
+  .tt-day-col:nth-child(6),
+  .tt-day-col:nth-child(7) { display: none; }
+}
+@media (max-width: 600px) {
+  .tt-grid { grid-template-columns: repeat(2, 1fr); }
+  .tt-day-col:nth-child(3),
+  .tt-day-col:nth-child(4) { display: none; }
+  .tt-week-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
+
 @media (max-width: 900px) {
   nav { padding: 18px 24px; }
   .nav-links { display: none; }
@@ -437,50 +575,6 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 
 
 /* ── BOOKWHEN CUSTOM UI ── */
-.bw-filters {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
-  margin-bottom: 3px;
-}
-.bw-filter {
-  background: var(--white);
-  border: none;
-  padding: 22px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: background 0.25s, color 0.25s;
-  text-align: left;
-}
-.bw-filter-name {
-  font-family: 'Affigere', sans-serif;
-  font-size: 20px;
-  color: var(--green);
-  letter-spacing: 0.01em;
-  line-height: 1.2;
-  transition: color 0.25s;
-}
-.bw-filter-arrow {
-  font-size: 16px;
-  color: var(--green);
-  opacity: 0.25;
-  transition: opacity 0.25s, transform 0.25s, color 0.25s;
-}
-.bw-filter:hover,
-.bw-filter.active {
-  background: var(--accent, var(--green));
-}
-.bw-filter:hover .bw-filter-name,
-.bw-filter.active .bw-filter-name,
-.bw-filter:hover .bw-filter-arrow,
-.bw-filter.active .bw-filter-arrow {
-  color: var(--accent-text, var(--white));
-  opacity: 1;
-}
-.bw-filter:hover .bw-filter-arrow { transform: translateX(5px); }
-.bw-filter:first-child { --accent: var(--green); --accent-text: var(--white); }
 
 /* Week navigation */
 .bw-week-nav {
@@ -512,23 +606,7 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 .bw-week-btn:disabled { opacity: 0.25; cursor: default; }
 
 /* Day grouping */
-.bw-day-group { margin-bottom: 20px; }
-.bw-day-heading {
-  font-family: 'Instrument Serif', serif;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--green);
-  opacity: 0.4;
-  padding: 16px 0 8px;
-}
 .bw-grid { display: flex; flex-direction: column; }
-.bw-day-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
-  margin-bottom: 3px;
-}
 
 /* Session cards */
 .bw-card {
@@ -614,13 +692,10 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 @keyframes bwSpin { to { transform: rotate(360deg); } }
 
 @media (max-width: 900px) {
-  .bw-filters { grid-template-columns: 1fr 1fr; }
-  .bw-day-cards { grid-template-columns: 1fr; }
-  .bw-week-nav { flex-direction: column; gap: 10px; }
+      .bw-week-nav { flex-direction: column; gap: 10px; }
 }
 @media (max-width: 500px) {
-  .bw-filters { grid-template-columns: 1fr; }
-  .bw-filter { padding: 18px 20px; }
+    .bw-filter { padding: 18px 20px; }
   .bw-filter-name { font-size: 18px; }
 }
 </style>
@@ -739,72 +814,47 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   </div>
 </section>
 
-<!-- BOOKING WIDGET AREA -->
-<section style="background: var(--putty); padding: 80px 48px;" id="booking-embed">
-  <div style="max-width: 960px; margin: 0 auto;">
-    <p class="label reveal" style="color:var(--green); text-align:center;">Online Booking</p>
-    <h2 class="reveal" style="font-family:'Affigere',sans-serif; font-size:clamp(32px,4vw,48px); color:var(--green); margin-bottom:12px; line-height:1.2; letter-spacing:0.01em; text-align:center;">Reserve your session</h2>
-    <p class="reveal" style="font-size:17px; font-style:italic; color:var(--green); opacity:0.65; margin-bottom:48px; line-height:1.6; text-align:center;">Choose a session below — spaces are limited so book ahead.</p>
+<!-- TIMETABLE & BOOKING -->
+<section id="booking-embed" style="background:var(--green); padding:80px 48px;">
+  <div style="max-width:1200px; margin:0 auto;">
 
-    <!-- Session type filter — block buttons -->
-    <div class="bw-filters reveal" id="bw-tabs">
-      <button class="bw-filter active" data-filter="all">
-        <span class="bw-filter-name">All sessions</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
-      <button class="bw-filter" data-filter="Under 2" style="--accent:var(--blush); --accent-text:var(--blush-dark);">
-        <span class="bw-filter-name">Under 2's Play</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
-      <button class="bw-filter" data-filter="Lunchtime" style="--accent:var(--sky); --accent-text:var(--sky-dark);">
-        <span class="bw-filter-name">Lunchtime Play</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
-      <button class="bw-filter" data-filter="Post-Nap" style="--accent:var(--putty); --accent-text:var(--green);">
-        <span class="bw-filter-name">Post-Nap Play</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
-      <button class="bw-filter" data-filter="After School" style="--accent:var(--green); --accent-text:var(--white);">
-        <span class="bw-filter-name">After School Club</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
-      <button class="bw-filter" data-filter="Friday" style="--accent:var(--blush-dark); --accent-text:var(--white);">
-        <span class="bw-filter-name">Friday Night Lights</span>
-        <span class="bw-filter-arrow">&rarr;</span>
-      </button>
+    <!-- Header -->
+    <div class="reveal" style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:24px; margin-bottom:40px;">
+      <div>
+        <p class="label" style="color:var(--putty); opacity:0.6;">Book a session</p>
+        <h2 style="font-family:'Affigere',sans-serif; font-size:clamp(32px,4vw,52px); color:var(--white); line-height:1.1; letter-spacing:0.01em; margin-top:4px;">Weekly timetable</h2>
+      </div>
+      <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:16px; color:var(--putty); opacity:0.6; max-width:340px; line-height:1.5; text-align:right;">Tap any session to check availability and book your spot.</p>
     </div>
 
     <!-- Week navigation -->
-    <div class="bw-week-nav reveal" id="bw-week-nav" style="display:none;">
-      <button class="bw-week-btn" id="bw-prev">&#8592; Prev week</button>
-      <span class="bw-week-label" id="bw-week-label"></span>
-      <button class="bw-week-btn" id="bw-next">Next week &#8594;</button>
+    <div class="tt-week-nav reveal" id="bw-week-nav" style="display:none;">
+      <button class="tt-week-btn" id="bw-prev">&#8592; Prev week</button>
+      <span class="tt-week-label" id="bw-week-label"></span>
+      <button class="tt-week-btn" id="bw-next">Next week &#8594;</button>
     </div>
 
-    <!-- Loading state -->
-    <div id="bw-loading" style="text-align:center; padding:60px 0;">
-      <div class="bw-spinner"></div>
-      <p style="font-family:'Instrument Serif',serif; font-style:italic; color:var(--green); opacity:0.5; margin-top:16px;">Loading sessions…</p>
+    <!-- Loading -->
+    <div id="bw-loading" style="text-align:center; padding:80px 0;">
+      <div class="bw-spinner" style="border-color:rgba(255,255,255,0.15); border-top-color:var(--white);"></div>
+      <p style="font-family:'Instrument Serif',serif; font-style:italic; color:var(--white); opacity:0.4; margin-top:16px;">Loading sessions…</p>
     </div>
 
-    <!-- Error state -->
+    <!-- Error -->
     <div id="bw-error" style="display:none; text-align:center; padding:60px 0;">
-      <p style="font-family:'Instrument Serif',serif; color:var(--green); opacity:0.6;">Couldn't load sessions right now. <a href="https://bookwhen.com/rachelsplaycafe" target="_blank" style="color:var(--green);">Book directly on Bookwhen →</a></p>
+      <p style="font-family:'Instrument Serif',serif; color:var(--white); opacity:0.5;">Couldn't load sessions right now. <a href="https://bookwhen.com/rachelsplaycafe" target="_blank" style="color:var(--putty);">Book directly on Bookwhen →</a></p>
     </div>
 
-    <!-- Empty state -->
-    <div id="bw-empty" style="display:none; text-align:center; padding:60px 0;">
-      <p style="font-family:'Instrument Serif',serif; font-style:italic; color:var(--green); opacity:0.5;">No upcoming sessions in this category — check back soon.</p>
-    </div>
+    <!-- Timetable grid — injected by JS -->
+    <div id="bw-grid" style="display:none;"></div>
 
-    <!-- Session grid -->
-    <div id="bw-grid" class="bw-grid" style="display:none;"></div>
-
-    <p class="reveal" style="margin-top:32px; font-size:13px; color:var(--green); opacity:0.4; letter-spacing:0.05em; text-align:center;">Questions? Email <a href="mailto:hello@rachelsplay.cafe" style="color:var(--green);">hello@rachelsplay.cafe</a> or message us on Instagram.</p>
+    <p style="margin-top:28px; font-size:13px; font-family:'Instrument Serif',serif; color:var(--white); opacity:0.3; letter-spacing:0.05em; text-align:center;">
+      All sessions require advance booking — spaces are limited. Questions? <a href="mailto:hello@rachelsplay.cafe" style="color:var(--white); opacity:0.6;">hello@rachelsplay.cafe</a>
+    </p>
   </div>
 </section>
 
-<!-- WHAT'S INCLUDED -->
+<!-- WHAT'S INCLUDED --><!-- WHAT'S INCLUDED -->
 <div class="included">
   <div class="included-inner">
     <div class="section-header reveal">
@@ -1074,397 +1124,200 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// ── BOOKWHEN API ──
-(function() {
-  // API key is server-side — fetched via /api/sessions proxy
+// ── BOOKWHEN TIMETABLE ──
+(function () {
   const BOOKWHEN_BASE = 'https://bookwhen.com/rachelsplaycafe';
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   const SESSION_TYPES = [
-    { keyword: "Under 2",     label: "Under 2's",    bg: 'var(--blush)',     color: 'var(--blush-dark)' },
-    { keyword: "Lunchtime",   label: "Lunchtime",    bg: 'var(--sky)',       color: 'var(--sky-dark)'   },
-    { keyword: "Post-Nap",    label: "Post-Nap",     bg: 'var(--putty)',     color: 'var(--green)'      },
-    { keyword: "After School",label: "After School", bg: 'var(--green)',     color: 'var(--white)'      },
-    { keyword: "Friday",      label: "Fri Night",    bg: 'var(--blush-dark)', color: 'var(--white)'     },
+    { keyword: 'Under 2',      cls: 'tt-under2',     label: "Under 2's" },
+    { keyword: 'Lunchtime',    cls: 'tt-lunchtime',  label: 'Lunchtime' },
+    { keyword: 'Post-Nap',     cls: 'tt-postnap',    label: 'Post-Nap'  },
+    { keyword: 'After School', cls: 'tt-afterschool',label: 'After School' },
+    { keyword: 'Friday',       cls: 'tt-friday',     label: 'Fri Night' },
   ];
 
-  function getSessionType(title) {
+  function getType(title) {
     return SESSION_TYPES.find(t => title.includes(t.keyword)) ||
-           { label: 'Session', bg: 'var(--putty)', color: 'var(--green)' };
+           { cls: 'tt-afterschool', label: 'Session' };
   }
 
   function startOfWeek(d) {
-    const date = new Date(d);
+    const date = new Date(d); date.setHours(0,0,0,0);
     const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-    date.setDate(diff);
-    date.setHours(0,0,0,0);
+    date.setDate(date.getDate() - day + (day === 0 ? -6 : 1));
     return date;
   }
+  function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
 
-  function addDays(d, n) {
-    const date = new Date(d);
-    date.setDate(date.getDate() + n);
-    return date;
+  function formatWeekLabel(ws) {
+    const we = addDays(ws, 6);
+    const o = { day: 'numeric', month: 'long' };
+    return ws.toLocaleDateString('en-GB', o) + ' – ' + we.toLocaleDateString('en-GB', o);
   }
-
-  function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  function fmtTime(s) {
+    return new Date(s).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   }
-
-  function formatShortDate(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-  }
-
-  function formatTime(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-  }
-
-  function formatWeekLabel(weekStart) {
-    const end = addDays(weekStart, 6);
-    const opts = { day: 'numeric', month: 'long' };
-    return weekStart.toLocaleDateString('en-GB', opts) + ' – ' + end.toLocaleDateString('en-GB', opts);
-  }
-
-  function formatPrice(tickets) {
-    if (!tickets || !tickets.length) return null;
-    const prices = tickets
-      .map(t => {
-        const a = t.attributes || {};
-        // Bookwhen v2: cost is an object { net, tax, ... } in pence
-        if (a.cost && a.cost.net != null) return Number(a.cost.net);
-        // Fallback flat fields
-        return a.price_in_pence ?? a.cost_in_pence ?? a.price ?? null;
-      })
-      .filter(p => p != null);
+  function fmtPrice(tickets) {
+    const prices = tickets.map(t => t.attributes?.cost?.net).filter(p => p != null);
     if (!prices.length) return null;
     const min = Math.min(...prices);
     return min === 0 ? 'Free' : '£' + (min / 100).toFixed(2).replace('.00', '');
   }
-
   function getSpaces(tickets) {
-    if (!tickets || !tickets.length) return null;
-    let spacesLeft = 0, hasLimit = false, anyAvailable = false;
+    let available = 0, hasLimit = false, anyAvail = false;
     tickets.forEach(t => {
       const a = t.attributes || {};
-      // available is a boolean — true means bookable
-      if (a.available === true) anyAvailable = true;
-      // number_issued is null for unlimited; number_taken is how many booked
+      if (a.available === true) anyAvail = true;
       if (a.number_issued != null) {
         hasLimit = true;
-        spacesLeft += (Number(a.number_issued) - Number(a.number_taken || 0));
+        available += Math.max(0, Number(a.number_issued) - Number(a.number_taken || 0));
       }
     });
-    if (!anyAvailable) return { available: 0, total: 0 }; // all tickets unavailable
-    if (!hasLimit) return null; // unlimited — don't show a spaces count
-    return { available: Math.max(0, spacesLeft), total: null };
+    if (!anyAvail) return { available: 0, limited: true };
+    if (!hasLimit) return null;
+    return { available, limited: true };
   }
 
-  function renderCard(event) {
-    const attrs = event.attributes;
-    const title = attrs.title || 'Session';
-    const type = getSessionType(title);
-    const startAt = attrs.start_at;
-    const endAt = attrs.end_at;
+  let allEvents = [], allWeeks = [], weekOffset = 0;
 
-    const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
-    const tickets = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
-
-    const priceStr = formatPrice(tickets);
-    const spaces = getSpaces(tickets);
-    const isFull = spaces && spaces.available === 0;
-
-    let spacesHtml = '';
-    if (spaces) {
-      if (isFull) {
-        spacesHtml = '<span class="bw-card-spaces full">Fully booked</span>';
-      } else if (spaces.available <= 3) {
-        spacesHtml = `<span class="bw-card-spaces low">${spaces.available} space${spaces.available === 1 ? '' : 's'} left</span>`;
-      } else {
-        spacesHtml = `<span class="bw-card-spaces">${spaces.available} spaces</span>`;
-      }
-    }
-
-    const bookUrl = `${BOOKWHEN_BASE}#${event.id}`;
-
-    return `
-      <div class="bw-card" style="border-top: 3px solid ${type.bg};" data-basket-url="${attrs.built_basket_url || ''}" data-title="${title}" data-subtitle="${formatDate(startAt)} · ${formatTime(startAt)}${endAt ? ' – ' + formatTime(endAt) : ''}" data-session-type="${type.label}" data-tickets='${JSON.stringify(tickets.map(t => ({ id: t.id, title: t.attributes?.title || '', cost: t.attributes?.cost, available: t.attributes?.available, number_issued: t.attributes?.number_issued, number_taken: t.attributes?.number_taken })))}'>
-        <div class="bw-card-type" style="background:${type.bg}; color:${type.color};">${type.label}</div>
-        <div class="bw-card-title">${title}</div>
-        <div class="bw-card-datetime">
-          ${formatTime(startAt)}${endAt ? ' – ' + formatTime(endAt) : ''}
-        </div>
-        <div class="bw-card-meta">
-          ${spacesHtml}
-        </div>
-        ${isFull
-          ? `<a href="${bookUrl}" target="_blank" class="bw-card-btn full">Join waitlist</a>`
-          : `<button class="bw-card-btn" onclick="openBookingModal(this.closest('.bw-card'))">Book now</button>`
-        }
-      </div>
-    `;
+  function getWeeks(events) {
+    const set = new Set(events.map(e => startOfWeek(new Date(e.attributes.start_at)).toISOString()));
+    return Array.from(set).sort().map(s => new Date(s));
   }
 
-  let allEvents = [];
-  let currentFilter = 'all';
-  let currentWeekOffset = 0;
-  let allWeekStarts = [];
-
-  function getFilteredEvents() {
-    if (currentFilter === 'all') return allEvents;
-    return allEvents.filter(e => (e.attributes?.title || '').includes(currentFilter));
-  }
-
-  function getWeeksFromEvents(events) {
-    const weeks = new Set();
-    events.forEach(e => {
-      const ws = startOfWeek(new Date(e.attributes.start_at));
-      weeks.add(ws.toISOString());
-    });
-    return Array.from(weeks).sort().map(s => new Date(s));
-  }
-
-  function renderGrid() {
-    const grid = document.getElementById('bw-grid');
-    const empty = document.getElementById('bw-empty');
+  function renderTimetable() {
+    const grid    = document.getElementById('bw-grid');
     const weekNav = document.getElementById('bw-week-nav');
-    const weekLabel = document.getElementById('bw-week-label');
+    const label   = document.getElementById('bw-week-label');
     const prevBtn = document.getElementById('bw-prev');
     const nextBtn = document.getElementById('bw-next');
 
-    const filtered = getFilteredEvents();
-    allWeekStarts = getWeeksFromEvents(filtered);
+    if (!allWeeks.length) { grid.innerHTML = ''; return; }
 
-    if (!filtered.length || !allWeekStarts.length) {
-      grid.style.display = 'none';
-      weekNav.style.display = 'none';
-      empty.style.display = 'block';
-      return;
+    weekOffset = Math.max(0, Math.min(weekOffset, allWeeks.length - 1));
+    const ws = allWeeks[weekOffset];
+    const we = addDays(ws, 7);
+
+    label.textContent = formatWeekLabel(ws);
+    prevBtn.disabled  = weekOffset === 0;
+    nextBtn.disabled  = weekOffset >= allWeeks.length - 1;
+    weekNav.style.display = 'flex';
+
+    // Events for this week, sorted by start time
+    const weekEvents = allEvents
+      .filter(e => { const d = new Date(e.attributes.start_at); return d >= ws && d < we; })
+      .sort((a, b) => new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
+
+    // Build columns — Mon (1) to Sun (0→7)
+    let html = '<div class="tt-grid">';
+    for (let col = 0; col < 7; col++) {
+      const dayDate = addDays(ws, col);
+      const dayEvents = weekEvents.filter(e => {
+        const d = new Date(e.attributes.start_at);
+        return d.getDay() === (col + 1) % 7 || (col === 6 && d.getDay() === 0);
+      });
+
+      const isClosed = dayEvents.length === 0;
+      html += `<div class="tt-day-col${isClosed ? ' tt-closed' : ''}">`;
+      html += `<div class="tt-day-name">${DAYS[col]}<br><span style="font-family:'Instrument Serif',serif; font-style:italic; font-size:11px; opacity:0.5; font-size:10px;">${dayDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span></div>`;
+
+      if (isClosed) {
+        html += `<div class="tt-closed-msg">—</div>`;
+      } else {
+        dayEvents.forEach(event => {
+          const attrs = event.attributes;
+          const title = attrs.title || 'Session';
+          const type  = getType(title);
+          const startAt = attrs.start_at, endAt = attrs.end_at;
+
+          const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
+          const tickets   = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
+
+          const spaces  = getSpaces(tickets);
+          const isFull  = spaces && spaces.available === 0;
+          const isLow   = spaces && spaces.available > 0 && spaces.available <= 3;
+          const price   = fmtPrice(tickets);
+
+          let spacesStr = '';
+          if (isFull)       spacesStr = 'Fully booked';
+          else if (isLow)   spacesStr = `${spaces.available} left`;
+          else if (spaces)  spacesStr = `${spaces.available} spaces`;
+
+          const ticketData = JSON.stringify(tickets.map(t => ({
+            id:             t.id,
+            title:          t.attributes?.title || '',
+            cost:           t.attributes?.cost,
+            available:      t.attributes?.available,
+            number_issued:  t.attributes?.number_issued,
+            number_taken:   t.attributes?.number_taken,
+          }))).replace(/'/g, '&#39;');
+
+          const subtitle = `${fmtTime(startAt)}${endAt ? ' – ' + fmtTime(endAt) : ''} · ${dayDate.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
+
+          html += `
+            <div class="tt-slot ${type.cls}${isFull ? ' tt-full' : ''}"
+              ${!isFull ? `onclick="openBookingModal(this)"` : ''}
+              data-title="${title.replace(/"/g,'&quot;')}"
+              data-subtitle="${subtitle}"
+              data-session-type="${type.label}"
+              data-basket-url="${attrs.built_basket_url || ''}"
+              data-tickets='${ticketData}'>
+              <div class="tt-slot-time">${fmtTime(startAt)}${endAt ? '–' + fmtTime(endAt) : ''}</div>
+              <div class="tt-slot-name">${title}</div>
+              ${spacesStr ? `<div class="tt-slot-spaces${isLow ? ' low' : ''}">${spacesStr}</div>` : ''}
+              ${price ? `<div class="tt-slot-spaces" style="opacity:0.55;">${price}</div>` : ''}
+            </div>`;
+        });
+      }
+      html += '</div>';
     }
+    html += '</div>';
 
-    empty.style.display = 'none';
-
-    // Clamp week offset
-    currentWeekOffset = Math.max(0, Math.min(currentWeekOffset, allWeekStarts.length - 1));
-
-    const weekStart = allWeekStarts[currentWeekOffset];
-    const weekEnd = addDays(weekStart, 7);
-
-    weekLabel.textContent = formatWeekLabel(weekStart);
-    prevBtn.disabled = currentWeekOffset === 0;
-    nextBtn.disabled = currentWeekOffset >= allWeekStarts.length - 1;
-
-    // Show week nav only if there are multiple weeks
-    weekNav.style.display = allWeekStarts.length > 1 ? 'flex' : 'none';
-
-    // Filter to this week
-    const weekEvents = filtered.filter(e => {
-      const d = new Date(e.attributes.start_at);
-      return d >= weekStart && d < weekEnd;
-    });
-
-    if (!weekEvents.length) {
-      grid.style.display = 'block';
-      grid.innerHTML = '<p style="font-family:\'Instrument Serif\',serif; font-style:italic; color:var(--green); opacity:0.5; padding:40px 0; text-align:center;">No sessions this week.</p>';
-      return;
-    }
-
-    // Group by day
-    const byDay = {};
-    weekEvents.forEach(e => {
-      const d = new Date(e.attributes.start_at);
-      const key = d.toDateString();
-      if (!byDay[key]) byDay[key] = { label: formatDate(e.attributes.start_at), events: [] };
-      byDay[key].events.push(e);
-    });
-
-    let html = '';
-    Object.values(byDay).forEach(day => {
-      html += `<div class="bw-day-group">
-        <div class="bw-day-heading">${day.label}</div>
-        <div class="bw-day-cards">${day.events.map(renderCard).join('')}</div>
-      </div>`;
-    });
-
-    grid.style.display = 'block';
     grid.innerHTML = html;
+    grid.style.display = 'block';
   }
 
   window.bwShiftWeek = function(dir) {
-    currentWeekOffset += dir;
-    renderGrid();
-    document.getElementById('booking-embed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    weekOffset += dir;
+    renderTimetable();
   };
 
   async function loadEvents() {
     const loading = document.getElementById('bw-loading');
-    const error = document.getElementById('bw-error');
-
+    const error   = document.getElementById('bw-error');
     try {
-      const res = await fetch('/api/sessions');
-      if (!res.ok) throw new Error('API error ' + res.status);
+      const res  = await fetch('/api/sessions');
+      if (!res.ok) throw new Error(res.status);
       const data = await res.json();
 
       window._bwTickets = (data.included || []).filter(i => i.type === 'ticket');
       allEvents = (data.data || []).sort((a, b) =>
-        new Date(a.attributes.start_at) - new Date(b.attributes.start_at)
-      );
+        new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
+      allWeeks  = getWeeks(allEvents);
 
       loading.style.display = 'none';
-      renderGrid();
+      renderTimetable();
 
-      // Filter button handlers
-      document.querySelectorAll('.bw-filter').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.bw-filter').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentFilter = btn.dataset.filter;
-          currentWeekOffset = 0;
-          renderGrid();
-        });
-      });
-
-      // Week nav handlers (inline onclick also works)
       document.getElementById('bw-prev').addEventListener('click', () => window.bwShiftWeek(-1));
       document.getElementById('bw-next').addEventListener('click', () => window.bwShiftWeek(1));
 
     } catch (err) {
-      console.error('Bookwhen API error:', err);
+      console.error('Bookwhen error:', err);
       loading.style.display = 'none';
-      document.getElementById('bw-error').style.display = 'block';
+      error.style.display   = 'block';
     }
   }
-
-
-  // ── Ticket selector modal ──
-  let _bwCurrentTickets = [];
-
-  window.openBookingModal = function(card) {
-    const modal    = document.getElementById('bw-modal');
-    const titleEl  = document.getElementById('bw-modal-title');
-    const subtitleEl = document.getElementById('bw-modal-subtitle');
-    const typeEl   = document.getElementById('bw-modal-type');
-    const rowsEl   = document.getElementById('bw-ticket-rows');
-
-    titleEl.textContent    = card.dataset.title;
-    subtitleEl.textContent = card.dataset.subtitle;
-    typeEl.textContent     = card.dataset.sessionType || '';
-
-    // Parse tickets from data attribute
-    _bwCurrentTickets = JSON.parse(card.dataset.tickets || '[]');
-
-    // Build ticket rows
-    rowsEl.innerHTML = _bwCurrentTickets.map((t, i) => {
-      const pricePence = t.cost?.net ?? 0;
-      const priceStr   = pricePence === 0 ? 'Free' : '£' + (pricePence / 100).toFixed(2).replace('.00','');
-      const isSoldOut  = !t.available;
-      const max        = t.number_issued != null
-        ? Math.max(0, t.number_issued - (t.number_taken || 0))
-        : 20; // no cap — allow up to 20
-
-      return `
-        <div class="bw-ticket-row" id="bw-row-${i}">
-          <div class="bw-ticket-info">
-            <div class="bw-ticket-name">${t.title}</div>
-            <div class="bw-ticket-price">${priceStr} per ticket</div>
-            ${isSoldOut ? '<div class="bw-ticket-sold">Sold out</div>' : ''}
-          </div>
-          <div class="bw-qty-control">
-            <button class="bw-qty-btn" onclick="bwChangeQty(${i}, -1)" id="bw-minus-${i}" disabled>−</button>
-            <div class="bw-qty-num" id="bw-qty-${i}">0</div>
-            <button class="bw-qty-btn" onclick="bwChangeQty(${i}, 1)" id="bw-plus-${i}" ${isSoldOut || max === 0 ? 'disabled' : ''}>+</button>
-          </div>
-        </div>`;
-    }).join('');
-
-    bwUpdateTotal();
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
-
-  window.bwChangeQty = function(idx, delta) {
-    const qtyEl   = document.getElementById('bw-qty-' + idx);
-    const minusEl = document.getElementById('bw-minus-' + idx);
-    const plusEl  = document.getElementById('bw-plus-' + idx);
-    const t       = _bwCurrentTickets[idx];
-
-    const max = t.number_issued != null
-      ? Math.max(0, t.number_issued - (t.number_taken || 0))
-      : 20;
-
-    let qty = parseInt(qtyEl.textContent) + delta;
-    qty = Math.max(0, Math.min(qty, max));
-    qtyEl.textContent = qty;
-
-    minusEl.disabled = qty === 0;
-    plusEl.disabled  = qty >= max;
-
-    bwUpdateTotal();
-  };
-
-  function bwUpdateTotal() {
-    let totalPence = 0, totalTickets = 0;
-
-    _bwCurrentTickets.forEach((t, i) => {
-      const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
-      totalPence   += qty * (t.cost?.net ?? 0);
-      totalTickets += qty;
-    });
-
-    const totalEl   = document.getElementById('bw-modal-total');
-    const confirmEl = document.getElementById('bw-modal-confirm');
-
-    totalEl.textContent = totalPence === 0 && totalTickets === 0
-      ? '£0.00'
-      : totalPence === 0
-        ? 'Free'
-        : '£' + (totalPence / 100).toFixed(2);
-
-    if (totalTickets > 0) {
-      confirmEl.style.opacity = '1';
-      confirmEl.style.pointerEvents = 'auto';
-      confirmEl.textContent = `Book ${totalTickets} ticket${totalTickets === 1 ? '' : 's'} →`;
-    } else {
-      confirmEl.style.opacity = '0.4';
-      confirmEl.style.pointerEvents = 'none';
-      confirmEl.textContent = 'Select tickets to continue →';
-    }
-  }
-
-  window.bwConfirmBooking = function() {
-    // Build basket URL: basket_item_ids[ticket_id]=qty&...
-    const params = new URLSearchParams();
-    _bwCurrentTickets.forEach((t, i) => {
-      const qty = parseInt(document.getElementById('bw-qty-' + i)?.textContent || '0');
-      if (qty > 0) {
-        params.append('basket_item_ids[' + t.id + ']', qty);
-      }
-    });
-    const url = 'https://bookwhen.com/rachelsplaycafe/basket_items/apply?' + params.toString();
-    window.location.href = url;
-  };
-
-  function closeBwModal() {
-    document.getElementById('bw-modal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('bw-modal-close').addEventListener('click', closeBwModal);
-    document.getElementById('bw-modal-backdrop').addEventListener('click', closeBwModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBwModal(); });
-  });
 
   const section = document.getElementById('booking-embed');
   if (section) {
-    const io = new IntersectionObserver((entries) => {
+    const io = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) { io.disconnect(); loadEvents(); }
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05 });
     io.observe(section);
   }
 })();
+
 
 function toggleFaq(el) {
   const item = el.parentElement;
