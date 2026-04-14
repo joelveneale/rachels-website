@@ -1241,9 +1241,17 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   const BOOKWHEN_BASE = 'https://bookwhen.com/rachelsplaycafe';
   const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Exact title match — ordered longest first to avoid partial matches
+  // Normalise a title for comparison — lowercase, collapse spaces, strip smart quotes
+  function normalise(s) {
+    return s.toLowerCase()
+      .replace(/[\u2018\u2019']/g, "'")  // smart quotes → straight
+      .replace(/[\u2013\u2014]/g, '-')   // em/en dash → hyphen
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   const SESSION_TYPES = [
-    { title: "9am - 10.30am (Under 2's only)", cls: 'tt-s1', label: "Under 2's" },
+    { title: "9am - 10.30am (under 2's only)", cls: 'tt-s1', label: "Under 2's" },
     { title: '9am - 10.30am',                  cls: 'tt-s2', label: '9–10:30'   },
     { title: '11am - 1pm',                     cls: 'tt-s3', label: '11–1'      },
     { title: '1.30pm - 3pm',                   cls: 'tt-s4', label: '1:30–3'    },
@@ -1251,8 +1259,12 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   ];
 
   function getType(title) {
-    const match = SESSION_TYPES.find(t => title.trim() === t.title);
-    return match || { cls: 'tt-s6', label: 'Session' };
+    const n = normalise(title);
+    // Check exact match first, then partial — longer titles listed first to avoid short match winning
+    const match = SESSION_TYPES.find(t => n === t.title) ||
+                  SESSION_TYPES.find(t => n.includes(t.title));
+    if (!match) console.log('[Bookwhen] Unmatched title:', JSON.stringify(title));
+    return match || { cls: 'tt-s6', label: title };
   }
 
   function startOfWeek(d) {
