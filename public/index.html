@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta property="og:title" content="Rachel's Play Cafe — Beaconsfield">
+<meta property="og:description" content="A play café and wellness space for families in Beaconsfield, Buckinghamshire.">
+<meta property="og:image" content="/og-image.svg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%231A3A23'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='44' font-family='Georgia,serif' fill='white'>R</text></svg>">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rachel's Play Cafe & Wellness, Beaconsfield</title>
 <style>
@@ -454,16 +461,18 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 .tt-slot.tt-full:hover { filter: none; transform: none; }
 .tt-slot-time {
   font-family: 'Instrument Serif', serif;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  opacity: 0.65;
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
   line-height: 1;
 }
 .tt-slot-name {
   font-family: 'Instrument Serif', serif;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: normal;
   line-height: 1.3;
-  margin-top: 1px;
+  margin-top: 3px;
 }
 .tt-slot-spaces {
   font-family: 'Instrument Serif', serif;
@@ -545,17 +554,22 @@ footer { background: var(--green); padding: 64px 48px 36px; }
 .tt-s6 .tt-slot-name, .tt-s6 .tt-slot-spaces, .tt-s6 .tt-slot-book { color: var(--yellow-dark); }
 
 @media (max-width: 960px) {
-  #booking-embed { padding: 60px 20px; }
-  .tt-grid { grid-template-columns: repeat(4, 1fr); }
-  .tt-day-col:nth-child(5),
-  .tt-day-col:nth-child(6),
-  .tt-day-col:nth-child(7) { display: none; }
-}
-@media (max-width: 600px) {
-  .tt-grid { grid-template-columns: repeat(2, 1fr); }
-  .tt-day-col:nth-child(3),
-  .tt-day-col:nth-child(4) { display: none; }
+  #booking-embed { padding: 60px 12px; }
   .tt-week-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
+/* Full 7-day grid on all screen sizes via horizontal scroll */
+.tt-grid-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -12px;
+  padding: 0 12px;
+}
+.tt-grid {
+  min-width: 700px;
+}
+.tt-day-name {
+  position: sticky;
+  top: 0;
 }
 
 
@@ -819,10 +833,11 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
     <li><a href="#about">About</a></li>
     <li><a href="#booking-embed">Book</a></li>
     <li><a href="#wellness">Wellness</a></li>
+    <li><a href="#membership">Members</a></li>
     <li><a href="#parties">Parties</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#visit">Visit</a></li>
-    <li><a href="#booking" class="nav-book">Book Now</a></li>
+    <li><a href="#booking-embed" class="nav-book">Book Now</a></li>
   </ul>
   <button class="hamburger" onclick="openMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -835,10 +850,11 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
   <a href="#about" onclick="closeMenu()">About</a>
   <a href="#booking-embed" onclick="closeMenu()">Book</a>
   <a href="#wellness" onclick="closeMenu()">Wellness</a>
+  <a href="#membership" onclick="closeMenu()">Members</a>
   <a href="#parties" onclick="closeMenu()">Parties</a>
   <a href="#gallery" onclick="closeMenu()">Gallery</a>
   <a href="#visit" onclick="closeMenu()">Visit</a>
-  <a href="#booking" onclick="closeMenu()">Book Now</a>
+  <a href="#booking-embed" onclick="closeMenu()">Book Now</a>
 </div>
 
 <!-- HERO -->
@@ -851,8 +867,8 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
   <p class="hero-tag">Play Cafe &amp; Wellness · Beaconsfield</p>
   <div class="hero-logo">Rachel's<span class="hero-logo-sub">Play Cafe</span></div>
   <div class="hero-actions">
-    <a href="#booking" class="btn-primary">Book a Session</a>
-    <a href="#sessions" class="btn-outline">See What's On</a>
+    <a href="#booking-embed" class="btn-primary">Book a Session</a>
+    <a href="#whats-on" class="btn-outline">See What's On</a>
   </div>
   <div class="hero-scroll">
     <div class="scroll-line"></div>
@@ -873,6 +889,64 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
   <div class="trust-item"><span>Private hire available</span></div>
 </div>
 
+
+<!-- WHAT'S ON -->
+<section id="whats-on" style="background:var(--warm-cream); padding:80px 48px;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="reveal" style="margin-bottom:48px;">
+      <p class="label">What's on</p>
+      <h2>Open play from 9am, daily</h2>
+      <p style="font-family:'Instrument Serif',serif; font-size:18px; line-height:1.6; max-width:600px; margin-top:12px; opacity:0.75;">
+        Drop in any day for open play sessions. Plus each week we add something extra — activities, classes and events in The Nook.
+      </p>
+    </div>
+
+    <!-- Open play banner -->
+    <div class="reveal" style="background:var(--green); padding:28px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:4px;">
+      <div>
+        <div style="font-family:'Affigere',sans-serif; font-size:26px; color:var(--white); letter-spacing:0.01em; line-height:1.2;">Open Play</div>
+        <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:15px; color:var(--putty); opacity:0.8; margin-top:4px;">9am daily · All ages welcome · Booking required</div>
+      </div>
+      <a href="#booking-embed" style="font-family:'Instrument Serif',serif; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; background:var(--white); color:var(--green); padding:12px 24px; text-decoration:none; transition:background 0.2s;">Book a spot →</a>
+    </div>
+
+    <!-- Weekly extras grid -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px; margin-top:4px;" class="reveal">
+
+      <!-- Free add-on -->
+      <div style="background:var(--blush); padding:24px;">
+        <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--blush-dark); opacity:0.7; margin-bottom:8px;">Free add-on</div>
+        <div style="font-family:'Affigere',sans-serif; font-size:20px; color:var(--blush-dark); line-height:1.2; margin-bottom:6px;">Dinosaur Crafts</div>
+        <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--blush-dark); opacity:0.75; line-height:1.4;">Make your own dinosaur — modelling clay, googly eyes, creative chaos. For the under 7s.</div>
+        <div style="font-family:'Instrument Serif',serif; font-size:12px; color:var(--blush-dark); opacity:0.55; margin-top:12px; letter-spacing:0.08em; text-transform:uppercase;">Included with play session</div>
+      </div>
+
+      <!-- Free add-on -->
+      <div style="background:var(--sky); padding:24px;">
+        <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--sky-dark); opacity:0.7; margin-bottom:8px;">Free add-on</div>
+        <div style="font-family:'Affigere',sans-serif; font-size:20px; color:var(--sky-dark); line-height:1.2; margin-bottom:6px;">Bracelet Making</div>
+        <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--sky-dark); opacity:0.75; line-height:1.4;">Friendship bracelets, bead designs, colour mixing. A calm and creative corner.</div>
+        <div style="font-family:'Instrument Serif',serif; font-size:12px; color:var(--sky-dark); opacity:0.55; margin-top:12px; letter-spacing:0.08em; text-transform:uppercase;">Included with play session</div>
+      </div>
+
+      <!-- Paid class -->
+      <div style="background:var(--yellow); padding:24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--yellow-dark); opacity:0.7;">In The Nook</div>
+          <div style="font-family:'Affigere',sans-serif; font-size:18px; color:var(--yellow-dark);">£12</div>
+        </div>
+        <div style="font-family:'Affigere',sans-serif; font-size:20px; color:var(--yellow-dark); line-height:1.2; margin-bottom:6px;">Pilates with Kingham</div>
+        <div style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--yellow-dark); opacity:0.75; line-height:1.4;">A 45-minute mat Pilates class for parents while the little ones play. Suitable for all levels.</div>
+        <div style="margin-top:14px;">
+          <a href="#booking-embed" style="font-family:'Instrument Serif',serif; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--yellow-dark); border-bottom:1px solid var(--yellow-dark); text-decoration:none; opacity:0.8;">Book →</a>
+        </div>
+      </div>
+
+    </div>
+    <p class="reveal" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--green); opacity:0.45; margin-top:20px; text-align:center;">Activities change weekly — check the timetable for the latest.</p>
+  </div>
+</section>
+
 <!-- ABOUT -->
 <div id="about" class="about" style="padding-top:100px; padding-bottom:100px;">
   <div class="reveal">
@@ -880,7 +954,7 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
     <h2>Where little ones play &amp; grown-ups breathe</h2>
     <p>Rachel's is a play café and wellness space in the heart of Beaconsfield, Buckinghamshire. A place designed for families — where children can explore, play and make friends while parents enjoy great coffee and a moment to themselves.</p>
     <p>Founded in 2026 by Rachel and Joel Neale, we work with local producers and wellness practitioners to make Rachel's feel like the cosiest corner of town.</p>
-    <a href="#sessions" class="btn-primary" style="margin-top:24px; background:var(--green); color:var(--white);">Explore Sessions</a>
+    <a href="#booking-embed" class="btn-primary" style="margin-top:24px; background:var(--green); color:var(--white);">Explore Sessions</a>
   </div>
   <div class="about-img reveal reveal-delay-2">
     <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="9" y="9" width="26" height="26" rx="1" stroke="#1A3A23" stroke-opacity="0.25" stroke-width="1.5"/></svg>
@@ -983,9 +1057,27 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
   <div class="reveal reveal-delay-1">
     <p class="label">The Café</p>
     <h2>Fuel for the parents</h2>
-    <p>While the little ones play, you get a proper sit-down. We serve specialty coffee, seasonal teas, homemade bakes and wholesome light lunches — all sourced from local producers.</p>
+    <p>While the little ones play, you get a proper sit-down. Specialty coffee, seasonal smoothies, homemade bakes and wholesome light bites — all sourced from local producers.</p>
     <p>No rushing, no cold coffees. Just a warm space that's actually yours for a bit.</p>
-    <p class="cafe-menu-note">Menu changes seasonally. Dietary requirements catered for.</p>
+    <div class="cafe-menu" style="margin-top:32px; display:grid; grid-template-columns:1fr 1fr; gap:0;">
+      <div class="cafe-menu-cat">
+        <div class="cafe-menu-heading">Coffee &amp; Drinks</div>
+        <div class="cafe-menu-item"><span>Flat white, latte, cappuccino</span></div>
+        <div class="cafe-menu-item"><span>Oat, almond, soy options</span></div>
+        <div class="cafe-menu-item"><span>Herbal &amp; loose leaf teas</span></div>
+        <div class="cafe-menu-item"><span>Fresh fruit smoothies</span></div>
+        <div class="cafe-menu-item"><span>Kids' warm milk &amp; juice</span></div>
+      </div>
+      <div class="cafe-menu-cat">
+        <div class="cafe-menu-heading">Food</div>
+        <div class="cafe-menu-item"><span>Bagels — smoked salmon, cream cheese &amp; cucumber</span></div>
+        <div class="cafe-menu-item"><span>Bagels — avocado &amp; seeds</span></div>
+        <div class="cafe-menu-item"><span>Yoghurt bowl — granola, seasonal fruit, nuts &amp; seeds</span></div>
+        <div class="cafe-menu-item"><span>Homemade bakes &amp; energy balls</span></div>
+        <div class="cafe-menu-item"><span>Seasonal fruit pots for little ones</span></div>
+      </div>
+    </div>
+    <p class="cafe-menu-note" style="margin-top:20px;">Menu changes seasonally. Dietary requirements always catered for — just ask.</p>
   </div>
 </div>
 
@@ -1024,6 +1116,93 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
 
 
 <div class="section-divider"></div>
+
+<!-- MEMBERSHIP -->
+<section id="membership" style="background:var(--green); padding:80px 48px;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="reveal" style="margin-bottom:52px;">
+      <p class="label" style="color:var(--putty); opacity:0.6;">Membership &amp; Passes</p>
+      <h2 style="font-family:'Affigere',sans-serif; font-size:clamp(32px,4vw,52px); color:var(--white); line-height:1.1; letter-spacing:0.01em; margin-top:4px;">Play more, save more</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px;" class="reveal">
+
+      <!-- Monthly membership -->
+      <div style="background:var(--white); padding:36px 28px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--green); opacity:0.45;">Monthly</div>
+        <div style="font-family:'Affigere',sans-serif; font-size:42px; color:var(--green); line-height:1;">£24<span style="font-family:'Instrument Serif',serif; font-size:15px; opacity:0.45;">/month</span></div>
+        <div style="font-family:'Affigere',sans-serif; font-size:22px; color:var(--green); line-height:1.2;">Rachel's Member</div>
+        <div style="width:32px; height:2px; background:var(--blush); margin:4px 0;"></div>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; flex:1;">
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--green); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;color:var(--blush);">✓</span> Unlimited open play sessions
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--green); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;color:var(--blush);">✓</span> 10% off café
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--green); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;color:var(--blush);">✓</span> 10% off parties &amp; private hire
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--green); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;color:var(--blush);">✓</span> Priority booking for events
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--green); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;color:var(--blush);">✓</span> Cancel anytime
+          </li>
+        </ul>
+        <a href="https://bookwhen.com/rachelsplaycafe" target="_blank" style="display:block; text-align:center; padding:14px; background:var(--green); color:var(--white); font-family:'Instrument Serif',serif; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; margin-top:8px; transition:background 0.2s;">Join now →</a>
+      </div>
+
+      <!-- Play passes -->
+      <div style="background:var(--blush); padding:36px 28px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--blush-dark); opacity:0.6;">Play Passes</div>
+        <div style="font-family:'Affigere',sans-serif; font-size:42px; color:var(--blush-dark); line-height:1;">10<span style="font-family:'Instrument Serif',serif; font-size:15px; opacity:0.5;"> for 9</span></div>
+        <div style="font-family:'Affigere',sans-serif; font-size:22px; color:var(--blush-dark); line-height:1.2;">Session Bundle</div>
+        <div style="width:32px; height:2px; background:var(--blush-dark); opacity:0.3; margin:4px 0;"></div>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; flex:1;">
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--blush-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Buy 10 sessions, get 1 free
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--blush-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Valid for 6 months
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--blush-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Use for any session type
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--blush-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Share with a friend
+          </li>
+        </ul>
+        <a href="https://bookwhen.com/rachelsplaycafe" target="_blank" style="display:block; text-align:center; padding:14px; background:var(--blush-dark); color:var(--white); font-family:'Instrument Serif',serif; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; margin-top:8px; transition:opacity 0.2s;">Buy passes →</a>
+      </div>
+
+      <!-- Gift cards -->
+      <div style="background:var(--sky); padding:36px 28px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-family:'Instrument Serif',serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--sky-dark); opacity:0.6;">Gift Cards</div>
+        <div style="font-family:'Affigere',sans-serif; font-size:42px; color:var(--sky-dark); line-height:1;">Give<span style="font-family:'Instrument Serif',serif; font-size:15px; opacity:0.5;"> play</span></div>
+        <div style="font-family:'Affigere',sans-serif; font-size:22px; color:var(--sky-dark); line-height:1.2;">Gift a Rachel's Card</div>
+        <div style="width:32px; height:2px; background:var(--sky-dark); opacity:0.2; margin:4px 0;"></div>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; flex:1;">
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--sky-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Available in any amount
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--sky-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Redeemable on sessions, café &amp; events
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--sky-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> Delivered digitally or by post
+          </li>
+          <li style="font-family:'Instrument Serif',serif; font-size:15px; color:var(--sky-dark); line-height:1.4; padding-left:18px; position:relative;">
+            <span style="position:absolute;left:0;">✓</span> No expiry date
+          </li>
+        </ul>
+        <a href="mailto:hello@rachelsplay.cafe" style="display:block; text-align:center; padding:14px; background:var(--sky-dark); color:var(--white); font-family:'Instrument Serif',serif; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; text-decoration:none; margin-top:8px; transition:opacity 0.2s;">Get in touch →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- PARTIES -->
 <section id="parties" class="grain" style="position:relative;">
   <div class="parties-inner">
@@ -1179,7 +1358,8 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
       <li><a href="#about">About</a></li>
       <li><a href="#booking-embed">Book</a></li>
       <li><a href="#wellness">Wellness</a></li>
-      <li><a href="#parties">Parties</a></li>
+      <li><a href="#membership">Members</a></li>
+    <li><a href="#parties">Parties</a></li>
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#visit">Visit</a></li>
     </ul>
@@ -1302,21 +1482,22 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   function fmtTime(s) {
     return new Date(s).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   }
-  function getSpaces(tickets, cap) {
-    let available = 0, hasLimit = false, anyAvail = false;
+  function getSpaces(tickets) {
+    let available = 0, total = 0, hasLimit = false, anyAvail = false;
     tickets.forEach(t => {
       const a = t.attributes || {};
       if (a.available === true) anyAvail = true;
       if (a.number_issued != null) {
         hasLimit = true;
-        available += Math.max(0, Number(a.number_issued) - Number(a.number_taken || 0));
+        const issued = Number(a.number_issued);
+        const taken  = Number(a.number_taken || 0);
+        total     += issued;
+        available += Math.max(0, issued - taken);
       }
     });
-    if (!anyAvail) return { available: 0, limited: true };
-    // If no limit set in Bookwhen but we know max is 30
-    if (!hasLimit && cap) return { available: cap, limited: true };
+    if (!anyAvail) return { available: 0, total, limited: true };
     if (!hasLimit) return null;
-    return { available: Math.min(available, cap || available), limited: true };
+    return { available, total, limited: true };
   }
 
   let allEvents = [], allWeeks = [], weekOffset = 0;
@@ -1350,7 +1531,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       .sort((a, b) => new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
 
     // Build columns — Mon (1) to Sun (0→7)
-    let html = '<div class="tt-grid">';
+    let html = '<div class="tt-grid-wrap"><div class="tt-grid">';
     for (let col = 0; col < 7; col++) {
       const dayDate = addDays(ws, col);
       const dayEvents = weekEvents.filter(e => {
@@ -1374,7 +1555,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
           const tickets   = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
 
-          const spaces  = getSpaces(tickets, 30);
+          const spaces  = getSpaces(tickets);
           const isFull  = spaces && spaces.available === 0;
           const isLow   = spaces && spaces.available > 0 && spaces.available <= 5;
 
@@ -1384,10 +1565,10 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
             spacesStr = 'Fully booked';
             spacesClass = 'tt-slot-full';
           } else if (isLow) {
-            spacesStr = `${spaces.available} space${spaces.available === 1 ? '' : 's'} left`;
+            spacesStr = `${spaces.available} of ${spaces.total} left`;
             spacesClass = 'tt-slot-low';
           } else if (spaces) {
-            spacesStr = `${spaces.available} spaces`;
+            spacesStr = `${spaces.available} of ${spaces.total} spaces`;
             spacesClass = '';
           }
 
@@ -1430,7 +1611,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       }
       html += '</div>';
     }
-    html += '</div>';
+    html += '</div></div>';
 
     grid.innerHTML = html;
     grid.style.display = 'block';
