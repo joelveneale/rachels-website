@@ -1872,14 +1872,8 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       allEvents = processData(data2);
       allWeeks  = getWeeks(allEvents);
 
-      // Update buttons now we have full week range
-      const prevBtn = document.getElementById('bw-prev');
-      const nextBtn = document.getElementById('bw-next');
-      if (prevBtn) prevBtn.disabled = weekOffset === 0;
-      if (nextBtn) nextBtn.disabled = weekOffset >= allWeeks.length - 1;
-      // Show week nav in case it was hidden
-      const weekNav = document.getElementById('bw-week-nav');
-      if (weekNav && allWeeks.length > 1) weekNav.style.display = 'flex';
+      // Re-render to update week nav with full data
+      renderTimetable();
 
     } catch (err) {
       console.error('Bookwhen error:', err);
