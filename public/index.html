@@ -1506,7 +1506,6 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         available += Math.max(0, issued - taken);
       }
     });
-    // Log first ticket so we can see the actual data
     if (tickets.length && !window._bwSpacesLogged) {
       console.log('[Bookwhen] Ticket attrs sample:', JSON.stringify(tickets[0]?.attributes));
       window._bwSpacesLogged = true;
@@ -1570,6 +1569,11 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
           const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
           const tickets   = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
+
+          if (!window._bwEventLogged) {
+            console.log('[Bookwhen] Event attrs sample:', JSON.stringify(attrs));
+            window._bwEventLogged = true;
+          }
 
           const spaces  = getSpaces(tickets);
           const isFull  = spaces && spaces.available === 0;
