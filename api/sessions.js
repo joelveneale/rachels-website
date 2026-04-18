@@ -9,12 +9,15 @@ export default async function handler(req, res) {
     'Content-Type': 'application/json',
   };
 
+  // ?page=1 returns just the first page fast for initial render
+  const firstPageOnly = req.query.page === '1';
+
   try {
     let allEvents = [];
     let allIncluded = [];
     let offset = 0;
     const pageSize = 20;
-    const maxPages = 10; // cap at 200 events (~10 weeks)
+    const maxPages = firstPageOnly ? 1 : 10;
 
     for (let page = 0; page < maxPages; page++) {
       const url = `https://api.bookwhen.com/v2/events?include=tickets,location&page[size]=${pageSize}&page[offset]=${offset}`;
@@ -29,21 +32,17 @@ export default async function handler(req, res) {
       const included = data.included || [];
 
       allEvents = allEvents.concat(events);
-
-      // Merge included, deduplicate by id
       included.forEach(item => {
-        if (!allIncluded.find(i => i.id === item.id)) {
-          allIncluded.push(item);
-        }
+        if (!allIncluded.find(i => i.id === item.id)) allIncluded.push(item);
       });
 
-      // No more pages
       if (events.length < pageSize) break;
-
       offset += pageSize;
     }
 
-    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=60');
+    // First page gets short cache, full data gets longer
+    const maxAge = firstPageOnly ? 60 : 120;
+    res.setHeader('Cache-Control', `s-maxage=${maxAge}, stale-while-revalidate=60`);
     res.setHeader('Access-Control-Allow-Origin', '*');
     return res.status(200).json({ data: allEvents, included: allIncluded });
 
