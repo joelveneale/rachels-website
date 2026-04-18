@@ -1709,6 +1709,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     });
     weeks.sort((a, b) => a - b);
     console.log('[Bookwhen] Week keys:', Array.from(seen).sort());
+    console.log('[Bookwhen] Raw dates sample:', events.slice(0,5).map(e => e.attributes.start_at + ' → ' + dateFromISO(e.attributes.start_at).toDateString()));
     return weeks;
   }
 
@@ -1874,6 +1875,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
       allEvents = processData(data2);
       allWeeks  = getWeeks(allEvents);
+      console.log('[Bookwhen] Phase 2 total events:', allEvents.length, 'weeks:', allWeeks.length);
 
       // Update buttons now we have full week range
       const prevBtn = document.getElementById('bw-prev');
