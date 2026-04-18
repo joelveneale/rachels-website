@@ -56,7 +56,6 @@ body {
   font-family: 'Instrument Serif', Georgia, serif;
   background: var(--white);
   color: var(--green);
-  overflow-x: hidden;
 }
 
 /* NAV */
@@ -557,19 +556,31 @@ footer { background: var(--green); padding: 64px 48px 36px; }
   #booking-embed { padding: 60px 12px; }
   .tt-week-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
 }
-/* Full 7-day grid on all screen sizes via horizontal scroll */
+/* Full 7-day grid — horizontal scroll on mobile */
 .tt-grid-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -12px;
-  padding: 0 12px;
+  /* Bleed to section edges on mobile so scroll hint is visible */
+  margin: 0 -48px;
+  padding: 0 48px;
 }
 .tt-grid {
-  min-width: 700px;
+  /* Each column at least 120px — 7 cols = 840px min */
+  min-width: 840px;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
 }
-.tt-day-name {
-  position: sticky;
-  top: 0;
+@media (max-width: 960px) {
+  .tt-grid-wrap { margin: 0 -20px; padding: 0 20px; }
+}
+@media (max-width: 600px) {
+  .tt-grid-wrap { margin: 0 -12px; padding: 0 12px; }
+  .tt-grid { min-width: 700px; grid-template-columns: repeat(7, minmax(100px, 1fr)); }
+  .tt-slot { padding: 10px; }
+  .tt-slot-time { font-size: 12px; }
+  .tt-slot-name { font-size: 12px; }
+  .tt-slot-spaces { font-size: 10px; }
+  .tt-slot-book { font-size: 10px; }
+  .tt-day-name { font-size: 12px; padding: 10px 8px; }
 }
 
 
@@ -1565,10 +1576,14 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
             spacesStr = 'Fully booked';
             spacesClass = 'tt-slot-full';
           } else if (isLow) {
-            spacesStr = `${spaces.available} of ${spaces.total} left`;
+            spacesStr = spaces.total
+              ? `${spaces.available} of ${spaces.total} left`
+              : `${spaces.available} left`;
             spacesClass = 'tt-slot-low';
           } else if (spaces) {
-            spacesStr = `${spaces.available} of ${spaces.total} spaces`;
+            spacesStr = spaces.total
+              ? `${spaces.available} of ${spaces.total} spaces`
+              : `${spaces.available} spaces`;
             spacesClass = '';
           }
 
