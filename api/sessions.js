@@ -40,9 +40,6 @@ export default async function handler(req, res) {
       offset += pageSize;
     }
 
-    console.log(`[Sessions] pages=${Math.ceil(offset/pageSize)+1} events=${allEvents.length} firstPageOnly=${firstPageOnly}`);
-
-    // First page gets short cache, full data gets longer
     const maxAge = firstPageOnly ? 60 : 120;
     res.setHeader('Cache-Control', `s-maxage=${maxAge}, stale-while-revalidate=60`);
     res.setHeader('Access-Control-Allow-Origin', '*');
