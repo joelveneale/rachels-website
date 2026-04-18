@@ -1477,8 +1477,16 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     return { cls: 'tt-s6', label: title };
   }
 
+  // Parse date from ISO string directly to avoid timezone issues
+  function dateFromISO(s) {
+    // "2026-04-20T09:00:00.000+01:00" → use date part only
+    const [y, mo, day] = s.substring(0, 10).split('-').map(Number);
+    return new Date(y, mo - 1, day);
+  }
   function startOfWeek(d) {
-    const date = new Date(d); date.setHours(0,0,0,0);
+    // d is already a plain local Date
+    const date = new Date(d);
+    date.setHours(0, 0, 0, 0);
     const day = date.getDay();
     date.setDate(date.getDate() - day + (day === 0 ? -6 : 1));
     return date;
@@ -1493,32 +1501,19 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   function fmtTime(s) {
     return new Date(s).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   }
-  function getSpaces(tickets) {
-    let available = 0, total = 0, hasLimit = false, anyAvail = false;
-    tickets.forEach(t => {
-      const a = t.attributes || {};
-      if (a.available === true) anyAvail = true;
-      if (a.number_issued != null) {
-        hasLimit = true;
-        const issued = Number(a.number_issued);
-        const taken  = Number(a.number_taken || 0);
-        total     += issued;
-        available += Math.max(0, issued - taken);
-      }
-    });
-    if (tickets.length && !window._bwSpacesLogged) {
-      console.log('[Bookwhen] Ticket attrs sample:', JSON.stringify(tickets[0]?.attributes));
-      window._bwSpacesLogged = true;
-    }
-    if (!anyAvail) return { available: 0, total: total || null };
-    if (!hasLimit) return { available: null, total: null }; // available but no count
-    return { available, total };
+  function getSpaces(eventAttrs, tickets) {
+    const limit = eventAttrs?.attendee_limit;
+    const count = eventAttrs?.attendee_count || 0;
+    const anyAvail = tickets.some(t => t.attributes?.available === true);
+    if (!anyAvail) return { available: 0, total: limit || null };
+    if (limit != null) return { available: Math.max(0, limit - count), total: limit };
+    return { available: null, total: null };
   }
 
   let allEvents = [], allWeeks = [], weekOffset = 0;
 
   function getWeeks(events) {
-    const set = new Set(events.map(e => startOfWeek(new Date(e.attributes.start_at)).toISOString()));
+    const set = new Set(events.map(e => startOfWeek(dateFromISO(e.attributes.start_at)).toISOString()));
     return Array.from(set).sort().map(s => new Date(s));
   }
 
@@ -1542,7 +1537,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // Events for this week, sorted by start time
     const weekEvents = allEvents
-      .filter(e => { const d = new Date(e.attributes.start_at); return d >= ws && d < we; })
+      .filter(e => { const d = dateFromISO(e.attributes.start_at); return d >= ws && d < we; })
       .sort((a, b) => new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
 
     // Build columns — Mon (1) to Sun (0→7)
@@ -1550,7 +1545,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     for (let col = 0; col < 7; col++) {
       const dayDate = addDays(ws, col);
       const dayEvents = weekEvents.filter(e => {
-        const d = new Date(e.attributes.start_at);
+        const d = dateFromISO(e.attributes.start_at);
         return d.getDay() === (col + 1) % 7 || (col === 6 && d.getDay() === 0);
       });
 
@@ -1570,12 +1565,8 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const ticketIds = (event.relationships?.tickets?.data || []).map(t => t.id);
           const tickets   = (window._bwTickets || []).filter(t => ticketIds.includes(t.id));
 
-          if (!window._bwEventLogged) {
-            console.log('[Bookwhen] Event attrs sample:', JSON.stringify(attrs));
-            window._bwEventLogged = true;
-          }
 
-          const spaces  = getSpaces(tickets);
+          const spaces  = getSpaces(attrs, tickets);
           const isFull  = spaces && spaces.available === 0;
           const isLow   = spaces && spaces.available > 0 && spaces.available <= 5;
           const isUnlimited = spaces && spaces.available === null;
@@ -1663,6 +1654,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
       allEvents = (data.data || []).sort((a, b) =>
         new Date(a.attributes.start_at) - new Date(b.attributes.start_at));
       allWeeks  = getWeeks(allEvents);
+      console.log('[Bookwhen] Weeks found:', allWeeks.length, allWeeks.map(w => w.toDateString()));
 
       loading.style.display = 'none';
       renderTimetable();
