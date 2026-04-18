@@ -987,10 +987,10 @@ footer .footer-top { border-bottom-color: rgba(92,61,46,0.3); }
     </div>
 
     <!-- Week navigation -->
-    <div class="tt-week-nav reveal" id="bw-week-nav" style="display:none;">
-      <button class="tt-week-btn" id="bw-prev">&#8592; Prev week</button>
+    <div class="tt-week-nav" id="bw-week-nav" style="display:none; opacity:1;">
+      <button class="tt-week-btn" id="bw-prev" onclick="window.bwShiftWeek(-1)">&#8592; Prev week</button>
       <span class="tt-week-label" id="bw-week-label"></span>
-      <button class="tt-week-btn" id="bw-next">Next week &#8594;</button>
+      <button class="tt-week-btn" id="bw-next" onclick="window.bwShiftWeek(1)">Next week &#8594;</button>
     </div>
 
     <!-- Loading -->
@@ -1506,9 +1506,14 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         available += Math.max(0, issued - taken);
       }
     });
-    if (!anyAvail) return { available: 0, total, limited: true };
-    if (!hasLimit) return null;
-    return { available, total, limited: true };
+    // Log first ticket so we can see the actual data
+    if (tickets.length && !window._bwSpacesLogged) {
+      console.log('[Bookwhen] Ticket attrs sample:', JSON.stringify(tickets[0]?.attributes));
+      window._bwSpacesLogged = true;
+    }
+    if (!anyAvail) return { available: 0, total: total || null };
+    if (!hasLimit) return { available: null, total: null }; // available but no count
+    return { available, total };
   }
 
   let allEvents = [], allWeeks = [], weekOffset = 0;
@@ -1569,6 +1574,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
           const spaces  = getSpaces(tickets);
           const isFull  = spaces && spaces.available === 0;
           const isLow   = spaces && spaces.available > 0 && spaces.available <= 5;
+          const isUnlimited = spaces && spaces.available === null;
 
           let spacesStr = '';
           let spacesClass = '';
@@ -1580,7 +1586,10 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
               ? `${spaces.available} of ${spaces.total} left`
               : `${spaces.available} left`;
             spacesClass = 'tt-slot-low';
-          } else if (spaces) {
+          } else if (isUnlimited) {
+            spacesStr = 'Spaces available';
+            spacesClass = '';
+          } else if (spaces && spaces.available > 0) {
             spacesStr = spaces.total
               ? `${spaces.available} of ${spaces.total} spaces`
               : `${spaces.available} spaces`;
